@@ -7,12 +7,14 @@ import "firebase/firestore";
 import { Story } from "~/modules/entity";
 import { initializeApp } from "~/modules/firebase";
 
+initializeApp();
+console.log("initialized");
+
 interface Props {
   stories: Story[];
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  initializeApp();
   const query = firebase
     .firestore()
     .collection("stories")
