@@ -21,11 +21,12 @@ const prodConfig = {
 };
 
 export const initializeApp = () => {
-  if (firebase.apps.length !== 0) { return }
-  switch (process.env.ENDPOINT_FOR_CLIENT) {
-    case 'production':
-      firebase.initializeApp(prodConfig)
-    default:
-      firebase.initializeApp(devConfig)
+  if (firebase.apps.length === 0) {
+    switch (process.env.ENDPOINT_FOR_CLIENT) {
+      case 'production':
+        firebase.initializeApp(prodConfig)
+      default:
+        firebase.initializeApp(devConfig)
+    }
   }
 }
