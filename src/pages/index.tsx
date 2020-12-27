@@ -2,12 +2,29 @@ import Header from "~/components/header";
 import NextHead from "next/head";
 import Template from "~/template/top";
 import { NextPage, GetServerSideProps } from "next";
+import firebase from "firebase/app";
+import { Story } from "~/modules/entity";
+import { initializeApp } from "~/modules/firebase";
 
-export const getServerSideProps: GetServerSideProps<{}> = async () => {
-  return { props: {} };
+interface Props {
+  stories: Story[];
+}
+
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  initializeApp();
+  const query = firebase
+    .firestore()
+    .collection("stories")
+    .where("isPublished", "==", true)
+    .where("isActive", "==", true)
+    .limit(3);
+  const result = await query.get();
+  console.log(result.docs.length);
+  const stories = result.docs.map((doc) => doc.data() as Story);
+  return { props: { stories: stories } };
 };
 
-const Home: NextPage = () => {
+const Home: NextPage<Props> = (props) => {
   return (
     <div>
       <NextHead>
@@ -27,7 +44,7 @@ const Home: NextPage = () => {
       </NextHead>
       <Header />
       <main>
-        <Template />
+        <Template stories={props.stories} />
       </main>
     </div>
   );

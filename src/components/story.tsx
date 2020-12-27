@@ -1,11 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
-
-interface Story {
-  title: string;
-  body: string;
-  author: string;
-}
+import { Story as Props } from "~/modules/entity";
 
 const Title = styled.h3`
   font-weight: medium;
@@ -39,11 +34,11 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const StoryComponent: FC<Story> = (props) => (
+const StoryComponent: FC<Props> = (props) => (
   <Container>
     <Title>{props.title}</Title>
     <Body>{props.body}</Body>
-    <Author>著 • {props.author}</Author>
+    <Author>著 • User</Author>
   </Container>
 );
 
