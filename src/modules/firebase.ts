@@ -21,7 +21,7 @@ const prodConfig = {
 };
 
 export const initializeApp = () => {
-  if (firebase.apps.length === 0) {
+  if (!firebase.apps.length) {
     switch (process.env.ENDPOINT_FOR_CLIENT) {
       case 'production':
         firebase.initializeApp(prodConfig)
