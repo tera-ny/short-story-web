@@ -9,12 +9,7 @@ const Wrapper = styled.div`
   padding-bottom: 20px;
   display: flex;
   justify-content: space-between;
-  @media screen and (min-width: 0) and (max-width: 719px) {
-    align-items: center;
-  }
-  @media screen and (min-width: 720px) {
-    align-items: flex-end;
-  }
+  align-items: flex-end;
 `;
 
 const TitleLink = styled.div`
@@ -23,10 +18,10 @@ const TitleLink = styled.div`
   text-decoration: none;
   cursor: pointer;
   @media screen and (min-width: 0) and (max-width: 719px) {
-    font-size: 24px;
+    font-size: 22px;
   }
   @media screen and (min-width: 720px) {
-    font-size: 36px;
+    font-size: 38px;
   }
 `;
 
@@ -34,14 +29,15 @@ const Login = styled.div`
   color: black;
   font-weight: 100;
   text-decoration: none;
-  font-size: 20px;
   cursor: pointer;
   border-radius: 8px;
   padding: 0 10px;
   @media screen and (min-width: 0) and (max-width: 719px) {
-    height: 45px;
-    width: 45px;
-    object-fit: cover;
+    font-size: 16px;
+  }
+
+  @media screen and (min-width: 720px) {
+    font-size: 20px;
   }
 `;
 
@@ -53,15 +49,9 @@ const Header: VFC = () => (
           <TitleLink>short-story.space</TitleLink>
         </a>
       </Link>
-
       <Link href="/login">
         <a>
-          <Login>
-            <OnlyPC>ログイン</OnlyPC>
-            <OnlyMobile>
-              <img src="/images/user-circle.svg" alt="" />
-            </OnlyMobile>
-          </Login>
+          <Login>ログイン</Login>
         </a>
       </Link>
     </Wrapper>
