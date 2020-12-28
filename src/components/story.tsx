@@ -3,14 +3,16 @@ import styled from "styled-components";
 import { Story as Props } from "~/modules/entity";
 
 const Title = styled.h3`
-  font-weight: medium;
+  font-weight: 500;
   font-size: 28px;
+  margin: 36px 0 28px;
 `;
 
 const Body = styled.p`
   font-weight: 300;
   font-size: 16px;
   line-height: 200%;
+  margin: 0;
   @media screen and (min-width: 0) and (max-width: 719px) {
     text-align: left;
   }
