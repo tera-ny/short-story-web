@@ -1,7 +1,5 @@
 import { createGlobalStyle } from "styled-components";
 import type { AppProps } from "next/app";
-import { useEffect } from "react";
-import { initializeApp } from "~/modules/firebase";
 import NextHead from "next/head";
 
 const GrobalStyles = createGlobalStyle`
@@ -14,9 +12,6 @@ const GrobalStyles = createGlobalStyle`
 `;
 
 export default function App({ Component, pageProps }: AppProps) {
-  useEffect(() => {
-    initializeApp();
-  });
   return (
     <>
       <NextHead>

@@ -5,15 +5,14 @@ import { NextPage, GetServerSideProps } from "next";
 import firebase from "firebase";
 import "firebase/firestore";
 import { Story } from "~/modules/entity";
-import { initializeApp } from "~/modules/firebase";
+import { firebaseApp } from "~/modules/firebase";
 
 interface Props {
   stories: Story[];
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  initializeApp();
-  const query = firebase
+  const query = firebaseApp()
     .firestore()
     .collection("stories")
     .where("isPublished", "==", true)

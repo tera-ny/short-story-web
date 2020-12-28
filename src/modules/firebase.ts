@@ -20,16 +20,23 @@ const prodConfig = {
   measurementId: "G-306BSYP0CM"
 };
 
-export const initializeApp = () => {
+export const firebaseApp = () => {
   try {
     if (!firebase.apps.length) {
       switch (process.env.ENDPOINT_FOR_CLIENT) {
         case 'production':
-          firebase.initializeApp(prodConfig)
+          return firebase.initializeApp(prodConfig)
         default:
-          firebase.initializeApp(devConfig)
+          return firebase.initializeApp(devConfig)
       }
+    } else {
+      return firebase.app()
     }
-  } catch {
+  } catch (e) {
+    if (firebase.apps.length) {
+      return firebase.app()
+    } else {
+      throw e
+    }
   }
 }
