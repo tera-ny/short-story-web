@@ -1,5 +1,6 @@
 import { NextPage, GetServerSideProps } from "next";
 import NextHead from "next/head";
+import LoginTemplate from "~/template/login";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -16,6 +17,7 @@ const Login: NextPage = () => (
         content="short-story.spaceにログインして作品の投稿をしてみましょう。"
       />
     </NextHead>
+    <LoginTemplate />
   </>
 );
 
