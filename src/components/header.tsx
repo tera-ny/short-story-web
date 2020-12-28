@@ -1,7 +1,6 @@
 import { VFC } from "react";
 import Link from "next/link";
 import styled from "styled-components";
-import { OnlyMobile, OnlyPC } from "~/components/utils/responsive";
 
 const Wrapper = styled.div`
   margin-left: 20px;
