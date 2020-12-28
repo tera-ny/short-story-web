@@ -15,8 +15,10 @@ const Container = styled.div`
 const Title = styled.h2`
   font-size: 24px;
   font-weight: 700;
-  padding-bottom: 20px;
   display: flex;
+  @media screen and (min-width: 720px) {
+    padding-bottom: 20px;
+  }
 `;
 
 const Form = styled.div`
@@ -47,7 +49,8 @@ const Button = styled.button`
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   border-radius: 8px;
-  width: 400px;
+  max-width: 400px;
+  width: 100%;
   height: 45px;
 `;
 
@@ -56,7 +59,7 @@ const Login: FC = () => {
   const [password, setPassword] = useState<string>();
   const [isSigningIn, setIsSigninIn] = useState(false);
   const router = useRouter();
-  //Todo redirect 初回読み込み時にuseEffectが呼ばれないのでリダイレクト処理をする必要がある
+  //Todo redirect 初回読み込み時にuseEffectが呼ばれないので上手くリダイレクト処理をする必要がある
   useEffect(() => {
     if (firebaseApp().auth().currentUser) {
       router.push("/");
