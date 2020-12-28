@@ -56,6 +56,7 @@ const Login: FC = () => {
   const [password, setPassword] = useState<string>();
   const [isSigningIn, setIsSigninIn] = useState(false);
   const router = useRouter();
+  //Todo redirect 初回読み込み時にuseEffectが呼ばれないのでリダイレクト処理をする必要がある
   useEffect(() => {
     if (firebaseApp().auth().currentUser) {
       router.push("/");
@@ -64,6 +65,7 @@ const Login: FC = () => {
   const signIn = useCallback(async () => {
     if (!isSigningIn) {
       setIsSigninIn(true);
+      //Todo error handling
       await firebaseApp().auth().signInWithEmailAndPassword(email, password);
       setIsSigninIn(false);
     }
@@ -76,13 +78,11 @@ const Login: FC = () => {
         <InputForm
           title={"メールアドレス"}
           type="email"
-          value={email}
           changeValue={setEmail}
         />
         <InputForm
           title={"パスワード"}
           type="password"
-          value={password}
           changeValue={setPassword}
         />
         <Button disabled={isSigningIn} onClick={signIn}>
