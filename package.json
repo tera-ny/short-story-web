@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "yarn collect_sitemap && next build",
     "start": "next start",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "collect_sitemap": "node scripts/sitemap.js"
   },
   "dependencies": {
     "firebase": "^8.2.1",
@@ -26,6 +27,7 @@
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.0",
+    "nextjs-sitemap-generator": "^1.1.3",
     "prettier": "^2.2.1",
     "typescript": "^4.1.3"
   }
