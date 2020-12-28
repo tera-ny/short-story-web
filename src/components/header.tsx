@@ -1,6 +1,7 @@
-import { VFC } from "react";
+import { useState, useEffect, VFC } from "react";
 import Link from "next/link";
 import styled from "styled-components";
+import { firebaseApp } from "~/modules/firebase";
 
 const Wrapper = styled.div`
   margin-left: 20px;
@@ -40,21 +41,35 @@ const Login = styled.div`
   }
 `;
 
-const Header: VFC = () => (
-  <header>
-    <Wrapper>
-      <Link href="/">
-        <a>
-          <TitleLink>short-story.space</TitleLink>
-        </a>
-      </Link>
-      <Link href="/login">
-        <a>
-          <Login>ログイン</Login>
-        </a>
-      </Link>
-    </Wrapper>
-  </header>
-);
+const Header: VFC = () => {
+  const [isSigned, setIsSigned] = useState(false);
+  const [subscriber, setSubscriber] = useState<any>();
+  useEffect(() => {
+    setIsSigned(firebaseApp().auth().currentUser !== null);
+    firebaseApp()
+      .auth()
+      .onAuthStateChanged((user) => {
+        setIsSigned(user !== null);
+      });
+  });
+  return (
+    <header>
+      <Wrapper>
+        <Link href="/">
+          <a>
+            <TitleLink>short-story.space</TitleLink>
+          </a>
+        </Link>
+        {!isSigned && (
+          <Link href="/login">
+            <a>
+              <Login>ログイン</Login>
+            </a>
+          </Link>
+        )}
+      </Wrapper>
+    </header>
+  );
+};
 
 export default Header;
