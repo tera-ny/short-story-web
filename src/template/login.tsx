@@ -76,14 +76,14 @@ const Login: FC = () => {
   }, [email, password, isSigningIn]);
   const context = useContext(Context);
   useEffect(() => {
-    if (context.uid) {
+    if (context.uid && context.subscribed) {
       router.push("/");
     }
   }, [context]);
   return (
     <Context.Consumer>
       {(state) =>
-        state.uid && state.subscribed ? (
+        !state.uid && state.subscribed ? (
           <Container>
             <Title>short-story.spaceにログイン</Title>
             <Form>

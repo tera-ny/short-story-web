@@ -51,7 +51,7 @@ const Header: VFC = () => (
       </Link>
       <Context.Consumer>
         {(state) =>
-          state.uid && state.subscribed ? (
+          !state.uid && state.subscribed ? (
             <Link href="/login">
               <a>
                 <Login>ログイン</Login>
