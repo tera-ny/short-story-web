@@ -1,6 +1,7 @@
 import { Dispatch, FC, useMemo, useState } from "react";
 import { Action, ActionType } from "~/modules/storyeditor";
 import styled from "styled-components";
+import Button from "~/components/primarybutton";
 
 interface Props {
   defaultTitle?: string;
@@ -44,26 +45,6 @@ const BodyTextarea = styled.textarea`
   padding: 10px;
   resize: none;
   background-color: white;
-`;
-
-const Button = styled.button`
-  outline: none;
-  border: none;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 8px;
-  max-width: 400px;
-  width: 100%;
-  height: 45px;
-  cursor: pointer;
-  :active {
-    color: rgba(250, 250, 250, 0.8);
-    background-color: rgba(0, 0, 0, 0.85);
-  }
-  :disabled {
-    color: white;
-    background-color: rgba(220, 220, 220, 0.8);
-  }
 `;
 
 interface RemainingCounterProps {
