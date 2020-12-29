@@ -17,7 +17,9 @@ const Login: NextPage = () => (
         content="short-story.spaceにログインして作品の投稿をしてみましょう。"
       />
     </NextHead>
-    <LoginTemplate />
+    <main>
+      <LoginTemplate />
+    </main>
   </>
 );
 

@@ -55,12 +55,6 @@ const Button = styled.button`
   height: 45px;
 `;
 
-const SignedIn = styled.div`
-  justify-self: center;
-  a {
-    color: rgba(0, 0, 0, 0.8);
-  }
-`;
 const Login: FC = () => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
