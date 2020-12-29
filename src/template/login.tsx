@@ -1,10 +1,10 @@
-import { FC, useState, useCallback, useEffect } from "react";
+import { FC, useState, useCallback, useEffect, useContext } from "react";
 import styled from "styled-components";
 import InputForm from "~/components/inputform";
 import { useRouter } from "next/router";
 import { firebaseApp } from "~/modules/firebase";
 import Indicator from "~/components/indicator";
-import Link from "next/link";
+import { Context } from "~/modules/auth";
 
 const Container = styled.div`
   display: flex;
@@ -65,60 +65,49 @@ const Login: FC = () => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [isSigningIn, setIsSigninIn] = useState(false);
-  const [uid, setUserID] = useState<string>();
   const router = useRouter();
-  useEffect(() => {
-    setUserID(firebaseApp().auth().currentUser?.uid);
-    firebaseApp()
-      .auth()
-      .onAuthStateChanged((user) => {
-        setUserID(user?.uid);
-      });
-  });
   const signIn = useCallback(async () => {
     if (!isSigningIn) {
       setIsSigninIn(true);
       //Todo error handling
       await firebaseApp().auth().signInWithEmailAndPassword(email, password);
       setIsSigninIn(false);
-      router.push("/");
     }
   }, [email, password, isSigningIn]);
+  const context = useContext(Context);
+  useEffect(() => {
+    if (context.uid) {
+      router.push("/");
+    }
+  }, [context]);
   return (
-    <Container>
-      <Title>short-story.spaceにログイン</Title>
-      <Form>
-        {!uid && (
-          <>
-            <FormIndicator hidden={!isSigningIn} width={30} height={30} />
-            <InputForm
-              title={"メールアドレス"}
-              type="email"
-              changeValue={setEmail}
-            />
-            <InputForm
-              title={"パスワード"}
-              type="password"
-              changeValue={setPassword}
-            />
-            <Button disabled={isSigningIn} onClick={signIn}>
-              ログイン
-            </Button>
-          </>
-        )}
-        {uid && (
-          <>
-            <SignedIn>サイン済みです</SignedIn>
-            <SignedIn>{`UserID: ${uid}`}</SignedIn>
-            <SignedIn>
-              <Link href="/">
-                <a>トップページへ</a>
-              </Link>
-            </SignedIn>
-          </>
-        )}
-      </Form>
-    </Container>
+    <Context.Consumer>
+      {(state) =>
+        state.uid && state.subscribed ? (
+          <Container>
+            <Title>short-story.spaceにログイン</Title>
+            <Form>
+              <FormIndicator hidden={!isSigningIn} width={30} height={30} />
+              <InputForm
+                title={"メールアドレス"}
+                type="email"
+                changeValue={setEmail}
+              />
+              <InputForm
+                title={"パスワード"}
+                type="password"
+                changeValue={setPassword}
+              />
+              <Button disabled={isSigningIn} onClick={signIn}>
+                ログイン
+              </Button>
+            </Form>
+          </Container>
+        ) : (
+          <></>
+        )
+      }
+    </Context.Consumer>
   );
 };
 
