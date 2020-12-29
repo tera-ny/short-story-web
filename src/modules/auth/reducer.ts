@@ -1,4 +1,4 @@
-import { Reducer, useReducer } from "react";
+import { Reducer } from "react";
 import firebase from 'firebase'
 
 export interface State {

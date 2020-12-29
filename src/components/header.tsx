@@ -2,6 +2,8 @@ import { VFC } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Context } from "~/modules/auth";
+import PrimaryLink from "~/components/primaryLink";
+import { useRouter } from "next/router";
 
 const Wrapper = styled.div`
   margin-left: 20px;
@@ -10,6 +12,13 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
+  @media screen and (min-width: 720px) {
+    padding-bottom: 20px;
+  }
 `;
 
 const TitleLink = styled.div`
@@ -25,13 +34,13 @@ const TitleLink = styled.div`
   }
 `;
 
-const Login = styled.div`
+const Login = styled.a`
   color: black;
   font-weight: 100;
   text-decoration: none;
   cursor: pointer;
   border-radius: 8px;
-  padding: 0 10px;
+  padding: 5px 20px;
   @media screen and (min-width: 0) and (max-width: 719px) {
     font-size: 16px;
   }
@@ -41,29 +50,40 @@ const Login = styled.div`
   }
 `;
 
-const Header: VFC = () => (
-  <header>
-    <Wrapper>
-      <Link href="/">
-        <a>
-          <TitleLink>short-story.space</TitleLink>
-        </a>
-      </Link>
-      <Context.Consumer>
-        {(state) =>
-          !state.uid && state.subscribed ? (
-            <Link href="/login">
-              <a>
-                <Login>ログイン</Login>
-              </a>
-            </Link>
-          ) : (
-            <></>
-          )
-        }
-      </Context.Consumer>
-    </Wrapper>
-  </header>
-);
+const PostLink = styled(PrimaryLink)`
+  margin-right: 20px;
+  padding: 5px 15px;
+`;
+
+const Header: VFC = () => {
+  const router = useRouter();
+  return (
+    <header>
+      <Wrapper>
+        <Link href="/">
+          <a>
+            <TitleLink>short-story.space</TitleLink>
+          </a>
+        </Link>
+        <Context.Consumer>
+          {(state) => (
+            <>
+              {!state.uid && state.subscribed && (
+                <Link prefetch href="/login" passHref>
+                  <Login>ログイン</Login>
+                </Link>
+              )}
+              {state.uid && router.pathname !== "/new" && (
+                <Link prefetch href="/new" passHref>
+                  <PostLink>投稿する</PostLink>
+                </Link>
+              )}
+            </>
+          )}
+        </Context.Consumer>
+      </Wrapper>
+    </header>
+  );
+};
 
 export default Header;
