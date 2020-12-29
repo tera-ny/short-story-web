@@ -1,6 +1,9 @@
 import { createGlobalStyle } from "styled-components";
 import type { AppProps } from "next/app";
 import NextHead from "next/head";
+import { useEffect, useReducer } from "react";
+import auth from "~/modules/auth";
+import { Context } from "~/modules/auth";
 
 const GrobalStyles = createGlobalStyle`
   html {
@@ -12,6 +15,10 @@ const GrobalStyles = createGlobalStyle`
 `;
 
 export default function App({ Component, pageProps }: AppProps) {
+  const [state, dispatch] = useReducer(auth.reducer, auth.initialState);
+  useEffect(() => {
+    return auth.listen(dispatch);
+  }, []);
   return (
     <>
       <NextHead>
@@ -22,7 +29,9 @@ export default function App({ Component, pageProps }: AppProps) {
         />
       </NextHead>
       <GrobalStyles />
-      <Component {...pageProps} />
+      <Context.Provider value={state}>
+        <Component {...pageProps} />
+      </Context.Provider>
     </>
   );
 }
