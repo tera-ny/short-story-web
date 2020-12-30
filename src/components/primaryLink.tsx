@@ -14,6 +14,9 @@ const Button = styled.a`
     color: white;
     background-color: rgba(220, 220, 220, 0.8);
   }
+  :not(:disabled) {
+    cursor: pointer;
+  }
 
   @media screen and (min-width: 0) and (max-width: 719px) {
     font-size: 14px;

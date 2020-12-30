@@ -1,16 +1,12 @@
 import { NextPage } from "next";
 import { useReducer } from "react";
-import StoryForm from "~/components/storyform";
+import StoryForm from "~/components/storyeditor";
 import storyEditor from "~/modules/storyeditor";
 import Header from "~/components/header";
-import { Context } from "~/modules/auth";
+import EditorTemplate from "~/template/new";
 import NextHead from "next/head";
 
 const PostStory: NextPage = () => {
-  const [state, dispatch] = useReducer(
-    storyEditor.reducer,
-    storyEditor.initialState
-  );
   return (
     <>
       <NextHead>
@@ -24,15 +20,7 @@ const PostStory: NextPage = () => {
       </NextHead>
       <Header />
       <main>
-        <Context.Consumer>
-          {(state) =>
-            state.uid && state.subscribed ? (
-              <StoryForm dispatch={dispatch} />
-            ) : (
-              <></>
-            )
-          }
-        </Context.Consumer>
+        <EditorTemplate />
       </main>
     </>
   );
