@@ -2,7 +2,6 @@ import Header from "~/components/header";
 import NextHead from "next/head";
 import Template from "~/template/top";
 import { NextPage, GetServerSideProps } from "next";
-import firebase from "firebase";
 import "firebase/firestore";
 import { Story } from "~/modules/entity";
 import { firebaseApp } from "~/modules/firebase";
@@ -19,8 +18,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     .where("isActive", "==", true)
     .limit(3);
   const result = await query.get();
-  const stories = result.docs.map((doc) => doc.data() as Story);
-  return { props: { stories: stories } };
+  const stories = result.docs.map((snapshot) => snapshot.data() as Story);
+  console.log(stories);
+  return { props: { stories } };
 };
 
 const Home: NextPage<Props> = (props) => {

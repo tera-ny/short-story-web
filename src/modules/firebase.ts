@@ -40,3 +40,7 @@ export const firebaseApp = () => {
     }
   }
 }
+
+export enum FirestorePath {
+  story = 'stories'
+}
