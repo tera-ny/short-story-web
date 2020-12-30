@@ -11,12 +11,9 @@ interface Props {
 
 const Container = styled.div`
   display: grid;
-  height: calc(100vh - 76px);
   gap: 20px;
   padding: 20px;
-  margin-left: 20px;
   box-sizing: border-box;
-  background-color: #fafafa;
   grid-template-rows: 50px auto 45px;
   justify-content: space-between;
   > input,
@@ -27,24 +24,46 @@ const Container = styled.div`
     grid-column: 2;
     grid-row: 3;
   }
+
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    height: 500px;
+  }
+
+  @media screen and (min-width: 720px) {
+    height: calc(100vh - 76px);
+  }
 `;
 
 const TitleInput = styled.input`
-  font-size: 22px;
   outline: none;
   border: none;
   padding: 5px 10px;
-  background-color: white;
+  background-color: #fafafa;
+
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    font-size: 18px;
+  }
+
+  @media screen and (min-width: 720px) {
+    font-size: 22px;
+  }
 `;
 
 const BodyTextarea = styled.textarea`
-  font-size: 16px;
   line-height: 200%;
   outline: none;
   border: none;
   padding: 10px;
   resize: none;
-  background-color: white;
+  background-color: #fafafa;
+
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    font-size: 14px;
+  }
+
+  @media screen and (min-width: 720px) {
+    font-size: 16px;
+  }
 `;
 
 interface RemainingCounterProps {
