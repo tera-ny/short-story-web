@@ -19,7 +19,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     .limit(3);
   const result = await query.get();
   const stories = result.docs.map((snapshot) => snapshot.data() as Story);
-  console.log(stories);
   return { props: { stories } };
 };
 
