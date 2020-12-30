@@ -1,10 +1,18 @@
-import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { Action, ActionType, State } from "~/modules/storyeditor";
 import selector from "~/modules/storyeditor/selector";
 import styled from "styled-components";
 import Button from "~/components/primarybutton";
 import { Story } from "~/modules/entity";
 import { firebaseApp, FirestorePath } from "~/modules/firebase";
+import { Context } from "~/modules/auth";
 
 interface Props {
   state: State;
@@ -131,6 +139,7 @@ const RemainingCounter = styled.p<RemainingCounterProps>`
 const Editor: FC<Props> = (props) => {
   const [length, setBodyLength] = useState(props.state.body.length ?? 0);
   const [disabledNote, setDisabledNote] = useState(true);
+  const authContext = useContext(Context);
   const bodyState = useMemo(() => {
     const remaining = props.state.limit - length;
     if (remaining < 0) {
@@ -145,12 +154,16 @@ const Editor: FC<Props> = (props) => {
     }
   }, [length, props.state.limit]);
   const submit = useCallback(async () => {
+    if (!authContext.uid) {
+      return;
+    }
     const state = props.state;
     const story: Story = {
       title: state.title,
       body: state.body,
       isActive: true,
       isPublished: false,
+      author: authContext.uid,
     };
     if (state.ref) {
       await state.ref.set(story, { merge: true }).catch((e) => {
@@ -167,7 +180,7 @@ const Editor: FC<Props> = (props) => {
         console.error(e);
       }
     }
-  }, [props.state]);
+  }, [props.state, authContext.uid]);
   const toggleDisabledNote = useCallback(() => {
     setDisabledNote(!disabledNote);
   }, [disabledNote]);

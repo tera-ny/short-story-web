@@ -4,5 +4,5 @@ export interface Story {
   body: string;
   isPublished: boolean,
   isActive: boolean,
-  authorID?: string
+  author: string
 }

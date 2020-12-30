@@ -40,7 +40,7 @@ const StoryComponent: FC<Props> = (props) => (
   <Container>
     <Title>{props.title}</Title>
     <Body>{props.body}</Body>
-    <Author>著 • User</Author>
+    <Author>著 • {props.author}</Author>
   </Container>
 );
 
