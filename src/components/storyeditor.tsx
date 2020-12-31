@@ -13,6 +13,7 @@ import Button from "~/components/primarybutton";
 import { Story } from "~/modules/entity";
 import { firebaseApp, FirestorePath } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
+import Indicator from "./indicator";
 
 interface Props {
   state: State;
@@ -72,6 +73,7 @@ const BodyTextarea = styled.textarea`
 const ButtonContainer = styled.div`
   position: relative;
   display: flex;
+  align-items: center;
 `;
 
 interface NotesProps {
@@ -140,6 +142,7 @@ const Editor: FC<Props> = (props) => {
   const [length, setBodyLength] = useState(props.state.body.length ?? 0);
   const [disabledNote, setDisabledNote] = useState(true);
   const authContext = useContext(Context);
+  const [isUpdating, setIsUpdating] = useState(true);
   const bodyState = useMemo(() => {
     const remaining = props.state.limit - length;
     if (remaining < 0) {
@@ -212,6 +215,7 @@ const Editor: FC<Props> = (props) => {
         {bodyState.remaining}
       </RemainingCounter>
       <ButtonContainer>
+        {isUpdating && <Indicator width={20} height={20} />}
         <Help
           src="/images/help.svg"
           onClick={() => {

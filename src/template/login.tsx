@@ -55,7 +55,12 @@ const Button = styled.button`
   height: 45px;
 `;
 
-const Login: FC = () => {
+interface Props {
+  path?: string;
+  as?: string;
+}
+
+const Login: FC<Props> = (props) => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [isSigningIn, setIsSigninIn] = useState(false);
@@ -70,10 +75,19 @@ const Login: FC = () => {
   }, [email, password, isSigningIn]);
   const context = useContext(Context);
   useEffect(() => {
+    const path = props.path ?? router.query.redirect_to_path;
+    const as = props.as ?? router.query.redirect_to_as;
+    console.log(path, as);
     if (context.uid && context.subscribed) {
-      router.push("/");
+      if (typeof path === "string" && typeof as === "string") {
+        router.push(path, as);
+      } else if (typeof path === "string") {
+        router.push(path);
+      } else {
+        router.push("/");
+      }
     }
-  }, [context]);
+  }, [context, router.query]);
   return (
     <Context.Consumer>
       {(state) =>
