@@ -77,7 +77,6 @@ const Login: FC<Props> = (props) => {
   useEffect(() => {
     const path = props.path ?? router.query.redirect_to_path;
     const as = props.as ?? router.query.redirect_to_as;
-    console.log(path, as);
     if (context.uid && context.subscribed) {
       if (typeof path === "string" && typeof as === "string") {
         router.push(path, as);
