@@ -70,7 +70,6 @@ const Header: VFC = () => {
             <>
               {!state.uid && state.subscribed && (
                 <Link
-                  prefetch
                   href={{
                     pathname: "/login",
                     query: {
@@ -83,7 +82,7 @@ const Header: VFC = () => {
                 </Link>
               )}
               {state.uid && router.pathname !== "/new" && (
-                <Link prefetch href="/new" passHref>
+                <Link href="/new" passHref>
                   <PostLink>投稿する</PostLink>
                 </Link>
               )}

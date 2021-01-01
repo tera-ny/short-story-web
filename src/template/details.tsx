@@ -36,7 +36,6 @@ const Details: FC<Props> = ({ story }) => {
           pathname: "/users/[userid]/stories/[storyid]/edit",
           query: query,
         }}
-        prefetch
         passHref
       >
         <EditLink>編集する</EditLink>
