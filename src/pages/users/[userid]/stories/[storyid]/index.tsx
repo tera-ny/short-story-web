@@ -1,26 +1,11 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { NextPage, GetServerSideProps } from "next";
-import { firebaseApp, FirestorePath } from "~/modules/firebase";
-import { Story } from "~/modules/entity";
+import { fetchStory } from "~/modules/firebase";
 import NextHead from "next/head";
 import Header from "~/components/header";
 import Notfound from "~/pages/404";
-import StoryComponent from "~/components/story";
-import styled from "styled-components";
-
-interface Props {
-  story?: Story;
-}
-
-const fetchStory = async (id: string) => {
-  const response = await firebaseApp()
-    .firestore()
-    .collection(FirestorePath.story)
-    .doc(id)
-    .get();
-  return response.data() as Story;
-};
+import Template, { Props } from "~/template/details";
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -40,16 +25,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     props: {},
   };
 };
-
-const Container = styled.div`
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  > * {
-    max-width: 720px;
-  }
-`;
 
 const Details: NextPage<Props> = (props) => {
   const query = useRouter().query;
@@ -108,9 +83,7 @@ const Details: NextPage<Props> = (props) => {
       {story && (
         <>
           <main>
-            <Container>
-              <StoryComponent {...story} />
-            </Container>
+            <Template {...props} />
           </main>
         </>
       )}

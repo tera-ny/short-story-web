@@ -14,6 +14,7 @@ import { Story } from "~/modules/entity";
 import { firebaseApp, FirestorePath } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import Indicator from "./indicator";
+import firebase from "firebase";
 
 interface Props {
   state: State;
@@ -50,7 +51,6 @@ const TitleInput = styled.input`
   border: none;
   padding: 5px 10px;
   background-color: #fafafa;
-
   @media screen and (min-width: 0) and (max-width: 719px) {
     font-size: 20px;
   }
@@ -68,6 +68,7 @@ const BodyTextarea = styled.textarea`
   resize: none;
   background-color: #fafafa;
   font-size: 16px;
+  white-space: pre-wrap;
 `;
 
 const ButtonContainer = styled.div`
@@ -142,7 +143,7 @@ const Editor: FC<Props> = (props) => {
   const [length, setBodyLength] = useState(props.state.body.length ?? 0);
   const [disabledNote, setDisabledNote] = useState(true);
   const authContext = useContext(Context);
-  const [isUpdating, setIsUpdating] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const bodyState = useMemo(() => {
     const remaining = props.state.limit - length;
     if (remaining < 0) {
@@ -161,27 +162,32 @@ const Editor: FC<Props> = (props) => {
       return;
     }
     const state = props.state;
-    const story: Story = {
-      title: state.title,
-      body: state.body,
-      isActive: true,
-      isPublished: false,
-      author: authContext.uid,
-    };
-    if (state.ref) {
-      await state.ref.set(story, { merge: true }).catch((e) => {
-        console.error(e);
-      });
-    } else {
-      try {
-        const ref = await firebaseApp()
+    try {
+      setIsUpdating(true);
+      let ref: firebase.firestore.DocumentReference;
+      if (state.ref) {
+        ref = state.ref;
+        await ref.set(
+          { title: state.title, body: state.body },
+          { merge: true }
+        );
+      } else {
+        const story: Story = {
+          title: state.title,
+          body: state.body,
+          isActive: true,
+          isPublished: true,
+          author: authContext.uid,
+        };
+        ref = await firebaseApp()
           .firestore()
           .collection(FirestorePath.story)
           .add(story);
-        props.dispatch({ type: ActionType.submitted, payload: { ref: ref } });
-      } catch (e) {
-        console.error(e);
       }
+      setIsUpdating(false);
+      props.dispatch({ type: ActionType.submitted, payload: { ref: ref } });
+    } catch {
+      setIsUpdating(false);
     }
   }, [props.state, authContext.uid]);
   const toggleDisabledNote = useCallback(() => {

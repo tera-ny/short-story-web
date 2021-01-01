@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+import { Story } from './entity'
 
 const devConfig = {
   apiKey: "AIzaSyBzY2-PG4kdtIgST6Zac1BOHeE090QwU-k",
@@ -44,3 +45,12 @@ export const firebaseApp = () => {
 export enum FirestorePath {
   story = 'stories'
 }
+
+export const fetchStory = async (id: string) => {
+  const response = await firebaseApp()
+    .firestore()
+    .collection(FirestorePath.story)
+    .doc(id)
+    .get();
+  return response.data() as Story;
+};
