@@ -14,10 +14,7 @@ const New: FC = () => {
 
   useEffect(() => {
     if (state.ref && context.uid) {
-      router.push(
-        "/users/[userid]/stories/[storyid]",
-        `/users/${context.uid}/stories/${state.ref.id}`
-      );
+      router.push(`/users/${context.uid}/stories/${state.ref.id}`);
     }
   }, [state.ref, context.uid]);
 
