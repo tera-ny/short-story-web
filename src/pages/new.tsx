@@ -1,7 +1,4 @@
 import { NextPage } from "next";
-import { useReducer } from "react";
-import StoryForm from "~/components/storyeditor";
-import storyEditor from "~/modules/storyeditor";
 import Header from "~/components/header";
 import EditorTemplate from "~/template/new";
 import NextHead from "next/head";

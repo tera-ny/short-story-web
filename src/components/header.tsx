@@ -70,17 +70,19 @@ const Header: VFC = () => {
             <>
               {!state.uid && state.subscribed && (
                 <Link
-                  prefetch
-                  href={`/login?redirect_to_path=${router.pathname ?? "/"}${
-                    router.asPath ? "&redirect_to_as=" + router.asPath : ""
-                  }`}
+                  href={{
+                    pathname: "/login",
+                    query: {
+                      redirect_to_path: router.asPath,
+                    },
+                  }}
                   passHref
                 >
                   <Login>ログイン</Login>
                 </Link>
               )}
               {state.uid && router.pathname !== "/new" && (
-                <Link prefetch href="/new" passHref>
+                <Link href="/new" passHref>
                   <PostLink>投稿する</PostLink>
                 </Link>
               )}

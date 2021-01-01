@@ -12,7 +12,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   const as = context.query.redirect_to_as;
   const path = context.query.redirect_to_path;
-  console.log(path, as);
   return {
     props: {
       path: typeof path === "string" ? path : null,
