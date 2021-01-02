@@ -1,5 +1,5 @@
 import firebase from 'firebase'
-import { Story } from './entity'
+import { storyConverter } from './entity'
 
 const devConfig = {
   apiKey: "AIzaSyBzY2-PG4kdtIgST6Zac1BOHeE090QwU-k",
@@ -43,14 +43,24 @@ export const firebaseApp = () => {
 }
 
 export enum FirestorePath {
-  story = 'stories'
+  story = 'stories',
+  user = 'users'
 }
 
-export const fetchStory = async (id: string) => {
+export const fetchStory = async (uid: string, storyid: string) => {
   const response = await firebaseApp()
-    .firestore()
+    .firestore().collection(FirestorePath.user).doc(uid)
     .collection(FirestorePath.story)
-    .doc(id)
+    .doc(storyid)
+    .withConverter(storyConverter)
     .get();
-  return response.data() as Story;
+  return response
 };
+
+
+export const storyCollectionRef = (uid: string) =>
+  firebaseApp()
+    .firestore()
+    .collection(FirestorePath.user)
+    .doc(uid)
+    .collection(FirestorePath.story)

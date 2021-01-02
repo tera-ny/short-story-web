@@ -1,6 +1,8 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { Story as Props } from "~/modules/entity";
+import { Story } from "~/modules/entity";
+
+type Props = Pick<Story, "title" | "body">;
 
 const Title = styled.h3`
   font-weight: 500;
@@ -29,14 +31,6 @@ const Body = styled.p`
   }
 `;
 
-const Author = styled.p`
-  font-weight: 100;
-  font-size: 18px;
-  color: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  text-align: right;
-`;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -47,7 +41,6 @@ const StoryComponent: FC<Props> = (props) => (
   <Container>
     <Title>{props.title}</Title>
     <Body>{props.body}</Body>
-    <Author>著 • {props.author}</Author>
   </Container>
 );
 

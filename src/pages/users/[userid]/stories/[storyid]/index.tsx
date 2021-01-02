@@ -11,14 +11,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   const id = context.query.storyid;
-  if (typeof id === "string") {
+  const uid = context.query.userid;
+  if (typeof id === "string" && typeof uid === "string") {
     try {
-      const story = await fetchStory(id);
-      if (story.author === context.query.userid) {
-        return {
-          props: { story },
-        };
-      }
+      const snapshot = await fetchStory(uid, id);
+      return {
+        props: {
+          item: {
+            title: snapshot.get("title"),
+            body: snapshot.get("body"),
+          },
+        },
+      };
     } catch {}
   }
   return {
@@ -28,17 +32,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
 const Details: NextPage<Props> = (props) => {
   const query = useRouter().query;
-  const [story, setStory] = useState(props.story);
+  const [item, setItem] = useState(props.item);
   const [notfound, setNotfound] = useState<boolean>();
   useEffect(() => {
     const storyid = query.storyid;
-    if (typeof storyid === "string" && !story) {
+    const uid = query.userid;
+    if (typeof storyid === "string" && typeof uid === "string" && !item) {
       let unmouted = false;
       (async () => {
         try {
-          const story = await fetchStory(storyid);
+          const snapshot = await fetchStory(uid, storyid);
           if (!unmouted) {
-            setStory(story);
+            setItem(snapshot.data());
           }
         } catch {
           if (!unmouted) {
@@ -50,7 +55,7 @@ const Details: NextPage<Props> = (props) => {
         unmouted = true;
       };
     }
-  }, [props.story, query]);
+  }, [props.item, query]);
   if (notfound) {
     return <Notfound />;
   }
@@ -59,31 +64,30 @@ const Details: NextPage<Props> = (props) => {
       <NextHead>
         <meta property="og:type" content="book" />
         <meta property="og:site_name" content="short-story.space" />
-        {story && (
+        {item && (
           <>
-            <title>{story.title} short-story.space</title>
+            <title>{item.title} short-story.space</title>
             <meta
               property="og:title"
-              content={story.title + " short-story.space"}
+              content={item.title + " short-story.space"}
             />
             {/* Todo: append Author */}
-            <meta property="book:author" content={story.author} />
             <meta
               property="og:description"
               content={
-                story.body.length < 51
-                  ? story.body
-                  : story.body.substring(0, 50) + "..."
+                item.body.length < 51
+                  ? item.body
+                  : item.body.substring(0, 50) + "..."
               }
             />
           </>
         )}
       </NextHead>
       <Header />
-      {story && (
+      {item && (
         <>
           <main>
-            <Template {...props} />
+            <Template item={item} />
           </main>
         </>
       )}

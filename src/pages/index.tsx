@@ -3,23 +3,49 @@ import NextHead from "next/head";
 import Template from "~/template/top";
 import { NextPage, GetServerSideProps } from "next";
 import "firebase/firestore";
-import { Story } from "~/modules/entity";
 import { firebaseApp } from "~/modules/firebase";
+import { Story, storyConverter } from "~/modules/entity";
+
+export interface Content {
+  id: string;
+  author: string;
+  entity: Pick<Story, "title" | "body">;
+}
 
 interface Props {
-  stories: Story[];
+  contents: Content[];
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const query = firebaseApp()
     .firestore()
-    .collection("stories")
+    .collectionGroup("stories")
     .where("isPublished", "==", true)
     .where("isActive", "==", true)
+    .orderBy("createTime", "desc")
+    .withConverter(storyConverter)
     .limit(3);
-  const result = await query.get();
-  const stories = result.docs.map((snapshot) => snapshot.data() as Story);
-  return { props: { stories } };
+  try {
+    const result = await query.get();
+
+    const contents = result.docs.map(
+      (snapshot): Content => {
+        return {
+          id: snapshot.id,
+          /// /users/${uid}/${stories}/${storyid}
+          author: snapshot.ref.parent.parent.id,
+          entity: {
+            title: snapshot.get("title"),
+            body: snapshot.get("body"),
+          },
+        };
+      }
+    );
+    return { props: { contents } };
+  } catch (e) {
+    console.error(e);
+    return { props: { contents: [] } };
+  }
 };
 
 const Home: NextPage<Props> = (props) => {
@@ -37,7 +63,7 @@ const Home: NextPage<Props> = (props) => {
       </NextHead>
       <Header />
       <main>
-        <Template stories={props.stories} />
+        <Template contents={props.contents} />
       </main>
     </div>
   );
