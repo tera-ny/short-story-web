@@ -7,30 +7,35 @@ import PrimaryLink from "~/components/primaryLink";
 import Link from "next/link";
 
 export interface Props {
-  story?: Story;
+  item?: Pick<Story, "title" | "body">;
 }
 
 const Container = styled.div`
   padding: 20px;
   display: grid;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
+  gap: 20px;
+  box-sizing: border-box;
   > * {
     grid-column: 1/ 3;
     max-width: 720px;
+  }
+  > div {
+    justify-self: center;
   }
 `;
 
 const EditLink = styled(PrimaryLink)`
   grid-column: 2 / 3;
-  justify-self: flex-end;
 `;
 
-const Details: FC<Props> = ({ story }) => {
+const Details: FC<Props> = ({ item }) => {
   const query = useRouter().query;
   return (
     <Container>
-      <StoryComponent {...story} />
+      <StoryComponent {...item} />
       <Link
         href={{
           pathname: "/users/[userid]/stories/[storyid]/edit",

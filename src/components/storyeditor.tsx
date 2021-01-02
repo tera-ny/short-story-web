@@ -10,8 +10,7 @@ import { Action, ActionType, State } from "~/modules/storyeditor";
 import selector from "~/modules/storyeditor/selector";
 import styled from "styled-components";
 import Button from "~/components/primarybutton";
-import { Story } from "~/modules/entity";
-import { firebaseApp, FirestorePath } from "~/modules/firebase";
+import { firebaseApp, storyCollectionRef } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import Indicator from "./indicator";
 import firebase from "firebase";
@@ -168,21 +167,22 @@ const Editor: FC<Props> = (props) => {
       if (state.ref) {
         ref = state.ref;
         await ref.set(
-          { title: state.title, body: state.body },
+          {
+            title: state.title,
+            body: state.body,
+            updateTime: firebase.firestore.FieldValue.serverTimestamp(),
+          },
           { merge: true }
         );
       } else {
-        const story: Story = {
+        ref = await storyCollectionRef(authContext.uid).add({
           title: state.title,
           body: state.body,
           isActive: true,
           isPublished: true,
-          author: authContext.uid,
-        };
-        ref = await firebaseApp()
-          .firestore()
-          .collection(FirestorePath.story)
-          .add(story);
+          createTime: firebase.firestore.FieldValue.serverTimestamp(),
+          updateTime: firebase.firestore.FieldValue.serverTimestamp(),
+        });
       }
       setIsUpdating(false);
       props.dispatch({ type: ActionType.submitted, payload: { ref: ref } });

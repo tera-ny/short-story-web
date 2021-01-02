@@ -2,10 +2,10 @@ import { FC } from "react";
 import styled from "styled-components";
 import Heading from "~/components/heading";
 import StoryItem from "~/components/story";
-import { Story } from "~/modules/entity";
+import { Content } from "~/pages";
 
 interface Props {
-  stories: Story[];
+  contents: Content[];
 }
 
 const Container = styled.div`
@@ -34,12 +34,12 @@ const Template: FC<Props> = (props) => (
   <Container>
     <Heading>新着のお話</Heading>
     <Items>
-      {props.stories &&
-        props.stories.map((story, index) => (
-          <StoryItem {...story} key={index} />
+      {props.contents &&
+        props.contents.map((content, index) => (
+          <StoryItem {...content.entity} key={index} />
         ))}
     </Items>
-    {!props.stories && <NotFound>お話がありません</NotFound>}
+    {!props.contents && <NotFound>お話がありません</NotFound>}
   </Container>
 );
 

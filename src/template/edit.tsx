@@ -24,7 +24,7 @@ const Edit: FC<Props> = (props) => {
       let unmouted = false;
       (async () => {
         try {
-          const story = await fetchStory(props.id);
+          const story = (await fetchStory(context.uid, props.id)).data();
           if (!unmouted) {
             dispatch({
               type: ActionType.fetchData,
