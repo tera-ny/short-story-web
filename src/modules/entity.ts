@@ -1,10 +1,19 @@
 import firebase from 'firebase'
 
-export interface Story {
+interface TimeStamps {
+  createTime: firebase.firestore.Timestamp,
+  updateTime: firebase.firestore.Timestamp
+}
+
+export interface Story extends TimeStamps {
   title: string;
   body: string;
   isPublished: boolean,
   isActive: boolean,
+}
+
+export interface User extends TimeStamps {
+  name: string;
 }
 
 export const storyConverter = {
@@ -19,3 +28,16 @@ export const storyConverter = {
     return data as Story
   }
 };
+
+export const userConverter = {
+  toFirestore(user: User): firebase.firestore.DocumentData {
+    return { name: user.name, updateTime: firebase.firestore.FieldValue.serverTimestamp }
+  },
+  fromFirestore(
+    snapshot: firebase.firestore.QueryDocumentSnapshot,
+    options: firebase.firestore.SnapshotOptions
+  ): User {
+    const data = snapshot.data(options)!;
+    return data as User;
+  }
+}
