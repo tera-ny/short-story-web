@@ -1,11 +1,8 @@
-import { FC, useContext } from "react";
-
+import { FC } from "react";
 import { Props, Content as StoryContent } from "~/pages/users/[userid]";
 import Link from "next/link";
 import styled from "styled-components";
-import PrimaryButton from "~/components/primarybutton";
-import PrimaryLink from "~/components/primaryLink";
-import { Context } from "~/modules/auth";
+import Header from "~/components/userheader";
 
 const Container = styled.div`
   display: flex;
@@ -41,53 +38,6 @@ const TimeStamp = styled.p`
   text-align: center;
 `;
 
-const ProfileContainer = styled.div`
-  display: grid;
-  row-gap: 20px;
-  justify-content: stretch;
-  width: 200px;
-  > img {
-    height: 100px;
-    width: 100px;
-    object-fit: contain;
-    border-radius: 50px;
-    justify-self: center;
-  }
-  > h1 {
-    font-size: 24px;
-    font-weight: 500;
-    text-align: center;
-    margin: 0;
-  }
-`;
-
-const EditLink = styled(PrimaryLink)`
-  font-weight: 500;
-  width: 150px;
-  justify-self: center;
-  font-size: 13px;
-  text-align: center;
-`;
-
-const ActionButton = styled(PrimaryButton)`
-  font-weight: 500;
-  width: 150px;
-  justify-self: center;
-`;
-
-const HeadingContainer = styled.div`
-  display: grid;
-  row-gap: 40px;
-  padding: 100px 0;
-  justify-content: center;
-  grid-template-rows: 1fr 40px;
-  > button {
-    font-weight: 500;
-    width: 150px;
-    justify-self: center;
-  }
-`;
-
 const SectionHeader = styled.h4`
   margin: 0;
   font-weight: 100;
@@ -102,30 +52,6 @@ const Contents = styled.div`
   }
 `;
 
-interface HeadingProps {
-  name: string;
-}
-
-const Heading: FC<HeadingProps> = (props) => {
-  const context = useContext(Context);
-  return (
-    <HeadingContainer>
-      <ProfileContainer>
-        <img src="/images/user-icon.svg" alt="" />
-        <h1>{props.name}</h1>
-      </ProfileContainer>
-      {context.subscribed &&
-        (context.uid ? (
-          <Link href={`/users/${context.uid}/edit`} passHref>
-            <EditLink>プロフィールを編集</EditLink>
-          </Link>
-        ) : (
-          <ActionButton>フォローする</ActionButton>
-        ))}
-    </HeadingContainer>
-  );
-};
-
 const StoryComponent: FC<{ user: { id: string } } & StoryContent> = (props) => {
   return (
     <StoryContainer>
@@ -139,10 +65,11 @@ const StoryComponent: FC<{ user: { id: string } } & StoryContent> = (props) => {
     </StoryContainer>
   );
 };
+
 const User: FC<Props> = (props) => {
   return (
     <Container>
-      <Heading {...props.user} />
+      <Header {...props.user} />
       <SectionHeader>新しいお話</SectionHeader>
       <Contents>
         {props.user &&

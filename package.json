@@ -10,17 +10,21 @@
     "collect_sitemap": "node scripts/sitemap.js"
   },
   "dependencies": {
+    "@types/uuid": "^8.3.0",
     "dayjs": "^1.9.8",
     "firebase": "^8.2.1",
     "next": "10.0.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "styled-components": "^5.2.1"
+    "react-modal": "^3.12.1",
+    "styled-components": "^5.2.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/node": "^14.14.16",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-modal": "^3.10.6",
     "@types/styled-components": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.11.0",
     "@typescript-eslint/parser": "^4.11.0",

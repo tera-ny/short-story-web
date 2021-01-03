@@ -21,11 +21,11 @@ const Edit: FC<Props> = (props) => {
   const router = useRouter();
   useEffect(() => {
     if (context.uid) {
-      let unmouted = false;
+      let unmounted = false;
       (async () => {
         try {
           const story = (await fetchStory(context.uid, props.id)).data();
-          if (!unmouted) {
+          if (!unmounted) {
             dispatch({
               type: ActionType.fetchData,
               payload: { id: props.id, story },
@@ -33,13 +33,13 @@ const Edit: FC<Props> = (props) => {
             setNotfound(false);
           }
         } catch {
-          if (!unmouted) {
+          if (!unmounted) {
             setNotfound(true);
           }
         }
       })();
       return () => {
-        unmouted = true;
+        unmounted = true;
       };
     }
   }, [props.id, context.uid]);

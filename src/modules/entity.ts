@@ -14,6 +14,7 @@ export interface Story extends TimeStamps {
 
 export interface User extends TimeStamps {
   name: string;
+  icon?: string,
 }
 
 export const storyConverter = {
@@ -31,7 +32,7 @@ export const storyConverter = {
 
 export const userConverter = {
   toFirestore(user: User): firebase.firestore.DocumentData {
-    return { name: user.name, updateTime: firebase.firestore.FieldValue.serverTimestamp }
+    return { name: user.name, icon: user.icon, updateTime: firebase.firestore.FieldValue.serverTimestamp }
   },
   fromFirestore(
     snapshot: firebase.firestore.QueryDocumentSnapshot,

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import StoryComponent from "~/components/story";
 import { Story } from "~/modules/entity";
 import styled from "styled-components";
-import PrimaryLink from "~/components/primaryLink";
+import PrimaryLink from "~/components/primarylink";
 import Link from "next/link";
 
 export interface Props {

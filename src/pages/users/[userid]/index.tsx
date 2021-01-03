@@ -17,6 +17,7 @@ export interface Props {
   user?: {
     id: string;
     name: string;
+    icon?: string;
   };
   contents: Content[];
 }
@@ -69,7 +70,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       );
       return {
         props: {
-          user: { id: userSnapshot.id, name: userSnapshot.get("name") },
+          user: {
+            id: userSnapshot.id,
+            name: userSnapshot.get("name"),
+            icon: userSnapshot.get("icon"),
+          },
           contents,
         },
       };
