@@ -52,7 +52,8 @@ const Login = styled.a`
 
 const PostLink = styled(PrimaryLink)`
   margin-right: 20px;
-  padding: 5px 15px;
+  padding: 10px 24px;
+  font-size: 13px;
 `;
 
 const Header: VFC = () => {
