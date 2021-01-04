@@ -2,7 +2,7 @@ import firebase from 'firebase'
 import { storyConverter } from './entity'
 import { v4 } from "uuid";
 import path from "path";
-import { userConverter } from "~/modules/entity";
+
 
 const devConfig = {
   apiKey: "AIzaSyBzY2-PG4kdtIgST6Zac1BOHeE090QwU-k",
@@ -26,7 +26,7 @@ const prodConfig = {
 
 const publicBucketName = () => {
   if (process.env.ENDPOINT_FOR_CLIENT === 'production') {
-    return "public-short-story"
+    return "public-short-story-prod"
   } else {
     return "public-short-story-dev"
   }
