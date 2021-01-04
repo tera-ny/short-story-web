@@ -35,13 +35,8 @@ const Form = styled.div`
   }
 `;
 
-interface FormIndicatorProps {
-  hidden: boolean;
-}
-
-const FormIndicator = styled(Indicator)<FormIndicatorProps>`
+const FormIndicator = styled(Indicator)`
   justify-self: center;
-  visibility: ${(p) => (p.hidden ? "hidden" : "visible")};
 `;
 
 const Button = styled.button`
@@ -94,7 +89,7 @@ const Login: FC<Props> = (props) => {
           <Container>
             <Title>short-story.spaceにログイン</Title>
             <Form>
-              <FormIndicator hidden={!isSigningIn} width={30} height={30} />
+              <FormIndicator visible={isSigningIn} width={30} height={30} />
               <InputForm
                 title={"メールアドレス"}
                 type="email"
