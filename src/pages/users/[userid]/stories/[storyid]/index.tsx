@@ -38,21 +38,21 @@ const Details: NextPage<Props> = (props) => {
     const storyid = query.storyid;
     const uid = query.userid;
     if (typeof storyid === "string" && typeof uid === "string" && !item) {
-      let unmouted = false;
+      let unmounted = false;
       (async () => {
         try {
           const snapshot = await fetchStory(uid, storyid);
-          if (!unmouted) {
+          if (!unmounted) {
             setItem(snapshot.data());
           }
         } catch {
-          if (!unmouted) {
+          if (!unmounted) {
             setNotfound(true);
           }
         }
       })();
       return () => {
-        unmouted = true;
+        unmounted = true;
       };
     }
   }, [props.item, query]);

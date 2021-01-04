@@ -2,7 +2,7 @@ import { VFC } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Context } from "~/modules/auth";
-import PrimaryLink from "~/components/primaryLink";
+import PrimaryLink from "~/components/primarylink";
 import { useRouter } from "next/router";
 
 const Wrapper = styled.div`

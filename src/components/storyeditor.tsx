@@ -10,7 +10,7 @@ import { Action, ActionType, State } from "~/modules/storyeditor";
 import selector from "~/modules/storyeditor/selector";
 import styled from "styled-components";
 import Button from "~/components/primarybutton";
-import { firebaseApp, storyCollectionRef } from "~/modules/firebase";
+import { storyCollectionRef } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import Indicator from "./indicator";
 import firebase from "firebase";
@@ -221,7 +221,7 @@ const Editor: FC<Props> = (props) => {
         {bodyState.remaining}
       </RemainingCounter>
       <ButtonContainer>
-        {isUpdating && <Indicator width={20} height={20} />}
+        <Indicator visible={isUpdating} width={20} height={20} />
         <Help
           src="/images/help.svg"
           onClick={() => {
