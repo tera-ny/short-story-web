@@ -98,6 +98,7 @@ const User: NextPage<Props> = (props) => {
               property="og:title"
               content={`${props.user.name} short-story.space`}
             />
+            <meta property="profile:username " content={props.user.name} />
             {/* Todo: description */}
           </>
         )}

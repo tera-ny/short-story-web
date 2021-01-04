@@ -3,11 +3,13 @@ import { FC } from "react";
 interface Props {
   height: number;
   width: number;
+  visible: boolean;
   className?: string;
 }
 
 const Indicator: FC<Props> = (props) => (
   <svg
+    style={{ visibility: props.visible ? "visible" : "hidden" }}
     className={props.className}
     version="1.1"
     id="loader-1"

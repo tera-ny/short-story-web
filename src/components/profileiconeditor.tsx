@@ -1,5 +1,12 @@
 import { uploadIconImage } from "~/modules/firebase";
-import { FC, useState, useCallback, useEffect } from "react";
+import {
+  FC,
+  useState,
+  useCallback,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import PrimaryButton from "~/components/primarybutton";
@@ -12,9 +19,9 @@ const modalStyle: ReactModal.Styles = {
     alignItems: "center",
     margin: "0 auto",
     boxSizing: "border-box",
-    maxWidth: "600px",
+    maxWidth: "400px",
     padding: "40px 20px 32px",
-    height: "auto",
+    height: "400px",
   },
   overlay: {
     position: "fixed",
@@ -48,7 +55,7 @@ const Modal: FC<ModalProps> = (props) => {
 
 const IconContainer = styled.div`
   width: 50%;
-  max-width: 200px;
+  max-width: 180px;
   justify-self: center;
   position: relative;
   ::before {
@@ -63,7 +70,7 @@ const IconContainer = styled.div`
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    object-fit: contain;
+    object-fit: cover;
   }
 `;
 
@@ -71,22 +78,12 @@ const FileTitle = styled.p`
   text-align: center;
 `;
 
-interface IndicatorProps {
-  hidden: boolean;
-}
-
-const UploadingIndicator = styled(Indicator)<IndicatorProps>`
+const UploadingIndicator = styled(Indicator)`
   justify-self: center;
-  visibility: ${(p) => (p.hidden ? "hidden" : "visible")};
 `;
-
-interface Props {
-  uid: string;
-}
 
 const ActionButton = styled(PrimaryButton)`
   font-weight: 500;
-  width: 150px;
   justify-self: center;
 `;
 
@@ -100,6 +97,11 @@ const InputWrapper = styled.label`
     display: none;
   }
 `;
+
+interface Props {
+  uid: string;
+  uploaded?: Dispatch<SetStateAction<string>>;
+}
 
 const Editor: FC<Props> = (props) => {
   const [iconFile, setIconFile] = useState<File>(null);
@@ -117,10 +119,11 @@ const Editor: FC<Props> = (props) => {
       (async () => {
         setIsUploading(true);
         try {
-          await uploadIconImage(props.uid, iconFile);
+          const url = await uploadIconImage(props.uid, iconFile);
           if (!unmounted) {
             setIsUploading(false);
             resetInput();
+            props.uploaded(url);
           }
         } catch (e) {
           console.error(e);
@@ -134,7 +137,7 @@ const Editor: FC<Props> = (props) => {
     return () => {
       unmounted = true;
     };
-  }, [iconFile]);
+  }, [iconFile, props]);
   const pickerid = "file_picker";
   const [selectIconURL, setSelectIconURL] = useState<string>();
   useEffect(() => {
@@ -181,7 +184,7 @@ const Editor: FC<Props> = (props) => {
               </IconContainer>
             )}
             <FileTitle>{iconFile.name}</FileTitle>
-            <UploadingIndicator hidden={!isUploading} width={40} height={40} />
+            <UploadingIndicator visible={isUploading} width={40} height={40} />
             <ActionButton
               onClick={() => {
                 uploadData();

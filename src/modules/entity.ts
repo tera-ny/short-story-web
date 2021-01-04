@@ -17,8 +17,8 @@ export interface User extends TimeStamps {
   icon?: string,
 }
 
-export const storyConverter = {
-  toFirestore(story: Story): firebase.firestore.DocumentData {
+export const storyConverter: firebase.firestore.FirestoreDataConverter<Story> = {
+  toFirestore(story: Partial<Story>): firebase.firestore.DocumentData {
     return { title: story.title, body: story.body, isPublished: story.isPublished, isActive: story.isActive, updateTime: firebase.firestore.FieldValue.serverTimestamp() }
   },
   fromFirestore(
@@ -30,8 +30,8 @@ export const storyConverter = {
   }
 };
 
-export const userConverter = {
-  toFirestore(user: User): firebase.firestore.DocumentData {
+export const userConverter: firebase.firestore.FirestoreDataConverter<User> = {
+  toFirestore(user: Partial<User>): firebase.firestore.DocumentData {
     return { name: user.name, icon: user.icon, updateTime: firebase.firestore.FieldValue.serverTimestamp }
   },
   fromFirestore(

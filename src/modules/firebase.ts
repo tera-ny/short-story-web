@@ -88,9 +88,11 @@ export const uploadPublicImage = async (file: File): Promise<string> => {
 
 export const uploadIconImage = async (uid: string, file: File) => {
   const name = await uploadPublicImage(file)
+  const url = `https://storage.googleapis.com/${publicBucketName()}/images/${name}`
   await firebaseApp()
     .firestore()
     .collection(FirestorePath.user)
     .doc(uid)
-    .set({ icon: `https://storage.googleapis.com/${publicBucketName()}/images/${name}`, updateTime: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    .set({ icon: url, updateTime: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+  return url
 }
