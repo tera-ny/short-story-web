@@ -1,7 +1,7 @@
 import { FC } from "react";
 import styled from "styled-components";
 import Heading from "~/components/heading";
-import StoryItem from "~/components/story";
+import StoryComponent from "~/components/storycomponent";
 import { Content } from "~/pages";
 
 interface Props {
@@ -36,7 +36,7 @@ const Template: FC<Props> = (props) => (
     <Items>
       {props.contents &&
         props.contents.map((content, index) => (
-          <StoryItem {...content.entity} key={index} />
+          <StoryComponent {...content} key={index} displayUser={true} />
         ))}
     </Items>
     {!props.contents && <NotFound>お話がありません</NotFound>}

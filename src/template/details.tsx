@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import StoryComponent from "~/components/story";
-import { Story } from "~/modules/entity";
+import StoryComponent from "~/components/storycomponent";
+import { Content } from "~/pages/users/[userid]/stories/[storyid]";
 import styled from "styled-components";
 import PrimaryLink from "~/components/primarylink";
 import Link from "next/link";
 
 export interface Props {
-  item?: Pick<Story, "title" | "body">;
+  content: Content;
 }
 
 const Container = styled.div`
@@ -31,11 +31,15 @@ const EditLink = styled(PrimaryLink)`
   grid-column: 2 / 3;
 `;
 
-const Details: FC<Props> = ({ item }) => {
+const Details: FC<Props> = ({ content }) => {
   const query = useRouter().query;
   return (
     <Container>
-      <StoryComponent {...item} />
+      <StoryComponent
+        {...content}
+        createTime={content.displayTime}
+        displayUser={true}
+      />
       <Link
         href={{
           pathname: "/users/[userid]/stories/[storyid]/edit",

@@ -5,22 +5,24 @@ import { firebaseApp, FirestorePath } from "~/modules/firebase";
 import { storyConverter, userConverter } from "~/modules/entity";
 import { format } from "~/modules/date";
 import NextHead from "next/head";
+import { Content } from "~/components/storycomponent";
 
-export interface Content {
-  id: string;
-  title: string;
-  body: string;
-  createTime: string;
-}
-
-export interface Props {
-  user?: {
-    id: string;
-    name: string;
-    icon?: string;
-  };
-  contents: Content[];
-}
+export type Props =
+  | {
+      private: false;
+      user: {
+        id: string;
+        name: string;
+        icon: string | null;
+      };
+      contents: Content[];
+    }
+  | {
+      private: true;
+      user: {
+        id: string;
+      };
+    };
 
 const convertToBoolean = (text: string | string[]): boolean | undefined => {
   try {
@@ -34,18 +36,32 @@ const convertToBoolean = (text: string | string[]): boolean | undefined => {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const includePrivate = convertToBoolean(context.query.includePrivate);
-  if (includePrivate) {
-    return { props: { contents: [] } };
-  }
   const uid = context.query.userid;
   if (typeof uid === "string") {
+    const includePrivate = convertToBoolean(context.query.includePrivate);
+    if (includePrivate) {
+      return { props: { private: true, user: { id: uid } } };
+    }
+    let user: {
+      id: string;
+      name: string;
+      icon: string | null;
+    };
+    const userRef = firebaseApp()
+      .firestore()
+      .collection(FirestorePath.user)
+      .doc(uid);
     try {
-      const userRef = firebaseApp()
-        .firestore()
-        .collection(FirestorePath.user)
-        .doc(uid);
       const userSnapshot = await userRef.withConverter(userConverter).get();
+      user = {
+        id: userSnapshot.id,
+        name: userSnapshot.get("name"),
+        icon: userSnapshot.get("icon"),
+      };
+    } catch {
+      return { notFound: true };
+    }
+    try {
       const contentsSnapshot = await userRef
         .collection(FirestorePath.story)
         .where("isPublished", "==", true)
@@ -70,11 +86,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       );
       return {
         props: {
-          user: {
-            id: userSnapshot.id,
-            name: userSnapshot.get("name"),
-            icon: userSnapshot.get("icon"),
-          },
+          private: false,
+          user: user,
           contents,
         },
       };
@@ -91,7 +104,7 @@ const User: NextPage<Props> = (props) => {
       <NextHead>
         <meta property="og:type" content="profile" />
         <meta property="og:site_name" content="short-story.space" />
-        {props.user && (
+        {props.private === false && (
           <>
             <title>{props.user.name} short-story.space</title>
             <meta
