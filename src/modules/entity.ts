@@ -1,38 +1,48 @@
-import firebase from 'firebase'
+import firebase from "firebase";
 
 interface TimeStamps {
-  createTime: firebase.firestore.Timestamp,
-  updateTime: firebase.firestore.Timestamp
+  createTime: firebase.firestore.Timestamp;
+  updateTime: firebase.firestore.Timestamp;
 }
 
 export interface Story extends TimeStamps {
   title: string;
   body: string;
-  isPublished: boolean,
-  isActive: boolean,
+  isPublished: boolean;
+  isActive: boolean;
 }
 
 export interface User extends TimeStamps {
   name: string;
-  icon?: string,
+  icon?: string;
 }
 
 export const storyConverter: firebase.firestore.FirestoreDataConverter<Story> = {
   toFirestore(story: Partial<Story>): firebase.firestore.DocumentData {
-    return { title: story.title, body: story.body, isPublished: story.isPublished, isActive: story.isActive, updateTime: firebase.firestore.FieldValue.serverTimestamp() }
+    return {
+      title: story.title,
+      body: story.body,
+      isPublished: story.isPublished,
+      isActive: story.isActive,
+      updateTime: firebase.firestore.FieldValue.serverTimestamp(),
+    };
   },
   fromFirestore(
     snapshot: firebase.firestore.QueryDocumentSnapshot,
     options: firebase.firestore.SnapshotOptions
   ): Story {
     const data = snapshot.data(options)!;
-    return data as Story
-  }
+    return data as Story;
+  },
 };
 
 export const userConverter: firebase.firestore.FirestoreDataConverter<User> = {
   toFirestore(user: Partial<User>): firebase.firestore.DocumentData {
-    return { name: user.name, icon: user.icon, updateTime: firebase.firestore.FieldValue.serverTimestamp }
+    return {
+      name: user.name,
+      icon: user.icon,
+      updateTime: firebase.firestore.FieldValue.serverTimestamp,
+    };
   },
   fromFirestore(
     snapshot: firebase.firestore.QueryDocumentSnapshot,
@@ -40,5 +50,5 @@ export const userConverter: firebase.firestore.FirestoreDataConverter<User> = {
   ): User {
     const data = snapshot.data(options)!;
     return data as User;
-  }
-}
+  },
+};

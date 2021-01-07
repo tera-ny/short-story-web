@@ -26,7 +26,10 @@ const TitleLink = styled.div`
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-  @media screen and (min-width: 0) and (max-width: 719px) {
+  @media screen and (min-width: 0) and (max-width: 339px) {
+    font-size: 16px;
+  }
+  @media screen and (min-width: 340) and (max-width: 719px) {
     font-size: 22px;
   }
   @media screen and (min-width: 720px) {
@@ -41,10 +44,12 @@ const Login = styled.a`
   cursor: pointer;
   border-radius: 8px;
   padding: 5px 20px;
-  @media screen and (min-width: 0) and (max-width: 719px) {
+  @media screen and (min-width: 0) and (max-width: 339px) {
+    display: none;
+  }
+  @media screen and (min-width: 340) and (max-width: 719px) {
     font-size: 16px;
   }
-
   @media screen and (min-width: 720px) {
     font-size: 20px;
   }
@@ -52,8 +57,16 @@ const Login = styled.a`
 
 const PostLink = styled(PrimaryLink)`
   margin-right: 20px;
-  padding: 10px 24px;
   font-size: 13px;
+  @media screen and (max-width: 339px) {
+    display: none;
+  }
+  @media screen and (min-width: 340px) and (max-width: 719px) {
+    padding: 5px 12px;
+  }
+  @media screen and (min-width: 720px) {
+    padding: 10px 24px;
+  }
 `;
 
 const Header: VFC = () => {

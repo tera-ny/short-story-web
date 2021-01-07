@@ -4,13 +4,11 @@ import Template from "~/template/top";
 import { NextPage, GetServerSideProps } from "next";
 import "firebase/firestore";
 import { firebaseApp } from "~/modules/firebase";
-import { Story, storyConverter } from "~/modules/entity";
+import { storyConverter, userConverter } from "~/modules/entity";
+import { format } from "~/modules/date";
+import { Content as StoryContent } from "~/components/storycomponent";
 
-export interface Content {
-  id: string;
-  author: string;
-  entity: Pick<Story, "title" | "body">;
-}
+export type Content = StoryContent & { user: { id: string; name: string } };
 
 interface Props {
   contents: Content[];
@@ -28,18 +26,28 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   try {
     const result = await query.get();
 
-    const contents = result.docs.map(
-      (snapshot): Content => {
-        return {
-          id: snapshot.id,
-          /// /users/${uid}/${stories}/${storyid}
-          author: snapshot.ref.parent.parent.id,
-          entity: {
-            title: snapshot.get("title"),
-            body: snapshot.get("body"),
-          },
-        };
-      }
+    const contents = await Promise.all(
+      result.docs.map(
+        async (snapshot): Promise<Content> => {
+          const data = snapshot.data();
+          const authorRef = snapshot.ref.parent.parent;
+          const userSnapshot = await authorRef
+            .withConverter(userConverter)
+            .get();
+          const userData = userSnapshot.data();
+          return {
+            id: snapshot.id,
+            /// /users/${uid}/${stories}/${storyid}
+            user: {
+              id: userSnapshot.id,
+              name: userSnapshot.get("name") ?? "",
+            },
+            title: data.title,
+            body: data.body,
+            createTime: format(userData.createTime.toDate(), "YYYY/MM/DD"),
+          };
+        }
+      )
     );
     return { props: { contents } };
   } catch (e) {

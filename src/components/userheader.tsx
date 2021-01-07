@@ -1,5 +1,12 @@
 import styled from "styled-components";
-import { FC, useState, useContext, useCallback, useMemo } from "react";
+import {
+  FC,
+  useState,
+  useContext,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react";
 import PrimaryButton from "~/components/primarybutton";
 import { Context } from "~/modules/auth";
 import ProfileIconEditor from "~/components/profileiconeditor";
@@ -22,8 +29,13 @@ const Name = styled.h1`
 
 const ProfileContainer = styled.div`
   display: grid;
-  row-gap: 20px;
   justify-content: stretch;
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    row-gap: 12px;
+  }
+  @media screen and (min-width: 720px) {
+    row-gap: 16px;
+  }
 `;
 
 const ActionButton = styled(PrimaryButton)`
@@ -32,26 +44,22 @@ const ActionButton = styled(PrimaryButton)`
   justify-self: center;
 `;
 
-interface HeadingContainerProps {
-  isEditing: boolean;
-}
-
-const HeadingContainer = styled.div<HeadingContainerProps>`
-  display: grid;
-  row-gap: ${(p) => (p.isEditing ? "20px" : "52px")};
-  padding: 100px 0 80px;
-  justify-content: center;
-`;
-
-const Icon = styled(Image)`
-  border-radius: 50%;
-`;
-
 const ImageContainer = styled.div`
   display: grid;
   justify-self: center;
-  box-sizing: border-box;
-  gap: 10px;
+  justify-content: stretch;
+  row-gap: 10px;
+  overflow: hidden;
+  grid-auto-columns: 100%;
+  img {
+    border-radius: 50%;
+  }
+  @media screen and (min-width: 0) and (max-width: 499px) {
+    width: 120px;
+  }
+  @media screen and (min-width: 500px) {
+    width: 160px;
+  }
 `;
 
 const NameInput = styled.input`
@@ -69,6 +77,22 @@ interface HeadingProps {
 const UploadIndicator = styled(Indicator)`
   justify-self: center;
   padding-top: 10px;
+`;
+
+interface HeadingContainerProps {
+  isEditing: boolean;
+}
+
+const HeadingContainer = styled.div<HeadingContainerProps>`
+  display: grid;
+  row-gap: ${(p) => (p.isEditing ? "20px" : "52px")};
+  justify-content: stretch;
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    padding: 60px 0 40px;
+  }
+  @media screen and (min-width: 720px) {
+    padding: 100px 0 80px;
+  }
 `;
 
 const nameInputID = "name_input";
@@ -112,12 +136,13 @@ const UserHeader: FC<HeadingProps> = (props) => {
     <HeadingContainer isEditing={isEditing}>
       <ProfileContainer>
         <ImageContainer>
-          <Icon
-            priority={true}
+          <Image
+            key={icon}
             src={icon ?? "/images/user-icon.svg"}
             alt="icon"
-            width={150}
-            height={150}
+            layout="responsive"
+            width={200}
+            height={200}
           />
           {isEditing && context.uid && (
             <>

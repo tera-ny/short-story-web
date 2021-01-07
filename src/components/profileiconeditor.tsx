@@ -12,6 +12,10 @@ import styled from "styled-components";
 import PrimaryButton from "~/components/primarybutton";
 import Indicator from "~/components/indicator";
 
+const canvasID = "selected_icon_canvas";
+const canvasRenderSize = 180;
+const canvasContentSize = canvasRenderSize * 4;
+
 const modalStyle: ReactModal.Styles = {
   content: {
     display: "grid",
@@ -54,8 +58,7 @@ const Modal: FC<ModalProps> = (props) => {
 };
 
 const IconContainer = styled.div`
-  width: 50%;
-  max-width: 180px;
+  width: 180px;
   justify-self: center;
   position: relative;
   ::before {
@@ -63,14 +66,12 @@ const IconContainer = styled.div`
     display: block;
     padding-top: 100%;
   }
-  > img {
+  > canvas {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
+    width: ${canvasRenderSize}px;
+    height: ${canvasRenderSize}px;
   }
 `;
 
@@ -104,6 +105,8 @@ interface Props {
 }
 
 const Editor: FC<Props> = (props) => {
+  const pickerid = "file_picker";
+  const [selectIconURL, setSelectIconURL] = useState<string>();
   const [iconFile, setIconFile] = useState<File>(null);
   const [isUploading, setIsUploading] = useState(false);
   const resetInput = useCallback(() => {
@@ -115,15 +118,18 @@ const Editor: FC<Props> = (props) => {
   }, []);
   const uploadData = useCallback(() => {
     let unmounted = false;
-    if (iconFile && props.uid) {
+    if (selectIconURL && props.uid) {
       (async () => {
         setIsUploading(true);
         try {
-          const url = await uploadIconImage(props.uid, iconFile);
+          const image = await fetch(selectIconURL).then((result) =>
+            result.blob()
+          );
+          const url = await uploadIconImage(props.uid, image);
           if (!unmounted) {
+            props.uploaded(url);
             setIsUploading(false);
             resetInput();
-            props.uploaded(url);
           }
         } catch (e) {
           console.error(e);
@@ -137,9 +143,7 @@ const Editor: FC<Props> = (props) => {
     return () => {
       unmounted = true;
     };
-  }, [iconFile, props]);
-  const pickerid = "file_picker";
-  const [selectIconURL, setSelectIconURL] = useState<string>();
+  }, [selectIconURL, props]);
   useEffect(() => {
     setSelectIconURL(undefined);
     if (!iconFile) {
@@ -148,8 +152,45 @@ const Editor: FC<Props> = (props) => {
     let unmounted = false;
     let reader = new FileReader();
     reader.onload = () => {
-      if (!unmounted && typeof reader.result === "string") {
-        setSelectIconURL(reader.result);
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.getElementById(canvasID) as HTMLCanvasElement;
+        const context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        let canvasAspect = context.canvas.width / context.canvas.height,
+          imgAspect = image.width / image.height,
+          height: number,
+          width: number,
+          x: number,
+          y: number;
+        if (imgAspect >= canvasAspect) {
+          width = context.canvas.width * imgAspect;
+          height = context.canvas.width;
+          x = (image.width - image.height) / 2;
+          y = 0;
+        } else {
+          height = context.canvas.width / imgAspect;
+          width = context.canvas.width;
+          x = 0;
+          y = (image.height - image.width) / 2;
+        }
+        context.drawImage(
+          image,
+          x,
+          y,
+          image.width,
+          image.height,
+          0,
+          0,
+          width,
+          height
+        );
+        if (!unmounted) {
+          setSelectIconURL(canvas.toDataURL());
+        }
+      };
+      if (typeof reader.result === "string") {
+        image.src = reader.result;
       }
     };
     reader.readAsDataURL(iconFile);
@@ -178,11 +219,13 @@ const Editor: FC<Props> = (props) => {
       >
         {iconFile && (
           <>
-            {selectIconURL && (
-              <IconContainer>
-                <img src={selectIconURL} />
-              </IconContainer>
-            )}
+            <IconContainer>
+              <canvas
+                id={canvasID}
+                width={canvasContentSize}
+                height={canvasContentSize}
+              ></canvas>
+            </IconContainer>
             <FileTitle>{iconFile.name}</FileTitle>
             <UploadingIndicator visible={isUploading} width={40} height={40} />
             <ActionButton
