@@ -73,9 +73,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         (snapshot): Content => {
           const story = snapshot.data();
           const body =
-            story.body.length < 201
+            story.body.length <= 100
               ? story.body
-              : story.body.substring(0, 200) + "...";
+              : story.body.substring(0, 100) + "...";
           return {
             id: snapshot.id,
             title: story.title,
@@ -112,7 +112,8 @@ const User: NextPage<Props> = (props) => {
               content={`${props.user.name} short-story.space`}
             />
             <meta property="profile:username " content={props.user.name} />
-            {/* Todo: description */}
+            <meta property="og:image" content={props.user.icon} />
+            <meta property="og:description" content={""} />
           </>
         )}
       </NextHead>

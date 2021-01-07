@@ -50,7 +50,6 @@ const Login = styled.a`
   @media screen and (min-width: 340) and (max-width: 719px) {
     font-size: 16px;
   }
-
   @media screen and (min-width: 720px) {
     font-size: 20px;
   }
@@ -58,10 +57,15 @@ const Login = styled.a`
 
 const PostLink = styled(PrimaryLink)`
   margin-right: 20px;
-  padding: 10px 24px;
   font-size: 13px;
   @media screen and (max-width: 339px) {
     display: none;
+  }
+  @media screen and (min-width: 340px) and (max-width: 719px) {
+    padding: 5px 12px;
+  }
+  @media screen and (min-width: 720px) {
+    padding: 10px 24px;
   }
 `;
 

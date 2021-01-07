@@ -64,11 +64,11 @@ const User = styled.a`
   box-sizing: border-box;
   @media screen and (min-width: 0) and (max-width: 719px) {
     text-align: right;
-    align-self: flex-end;
+    justify-self: flex-end;
   }
   @media screen and (min-width: 720px) {
     text-align: center;
-    align-self: center;
+    justify-self: center;
   }
 `;
 
@@ -76,9 +76,11 @@ const TimeStamp = styled.p`
   align-self: center;
   @media screen and (min-width: 0) and (max-width: 719px) {
     text-align: right;
+    justify-self: flex-end;
   }
   @media screen and (min-width: 720px) {
     text-align: center;
+    justify-self: center;
   }
 `;
 

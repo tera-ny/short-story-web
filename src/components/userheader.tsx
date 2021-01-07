@@ -29,8 +29,13 @@ const Name = styled.h1`
 
 const ProfileContainer = styled.div`
   display: grid;
-  row-gap: 16px;
   justify-content: stretch;
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    row-gap: 12px;
+  }
+  @media screen and (min-width: 720px) {
+    row-gap: 16px;
+  }
 `;
 
 const ActionButton = styled(PrimaryButton)`
