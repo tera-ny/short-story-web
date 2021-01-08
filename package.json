@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "deploy:local": "vercel env pull & vercel dev",
     "build": "yarn collect_sitemap && next build",
     "start": "next start",
     "lint": "eslint --fix",
@@ -23,6 +23,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/firebase": "^3.2.1",
     "@types/node": "^14.14.16",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",

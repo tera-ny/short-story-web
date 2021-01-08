@@ -1,4 +1,4 @@
-import { NextPage, GetServerSideProps } from "next";
+import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import Header from "~/components/header";
 import UserTemplate from "~/template/user";
 import { firebaseApp, FirestorePath } from "~/modules/firebase";
@@ -7,41 +7,22 @@ import { format } from "~/modules/date";
 import NextHead from "next/head";
 import { Content } from "~/components/storycomponent";
 
-export type Props =
-  | {
-      private: false;
-      user: {
-        id: string;
-        name: string;
-        icon: string | null;
-      };
-      contents: Content[];
-    }
-  | {
-      private: true;
-      user: {
-        id: string;
-      };
-    };
-
-const convertToBoolean = (text: string | string[]): boolean | undefined => {
-  try {
-    if (typeof text === "string") {
-      return JSON.parse(text);
-    }
-  } catch {}
-  return undefined;
+export type Props = {
+  user: {
+    id: string;
+    name: string;
+    icon: string | null;
+  };
+  contents: Content[];
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const uid = context.query.userid;
+export const getStaticPaths: GetStaticPaths = async () => {
+  return { paths: [], fallback: "blocking" };
+};
+
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
+  const uid = params.userid;
   if (typeof uid === "string") {
-    const includePrivate = convertToBoolean(context.query.includePrivate);
-    if (includePrivate) {
-      return { props: { private: true, user: { id: uid } } };
-    }
     let user: {
       id: string;
       name: string;
@@ -86,16 +67,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       );
       return {
         props: {
-          private: false,
           user: user,
           contents,
         },
+        revalidate: 60,
       };
     } catch (e) {
       console.error(e);
     }
   }
-  return { notFound: true };
+  return { notFound: true, revalidate: 30 };
 };
 
 const User: NextPage<Props> = (props) => {
@@ -104,18 +85,14 @@ const User: NextPage<Props> = (props) => {
       <NextHead>
         <meta property="og:type" content="profile" />
         <meta property="og:site_name" content="short-story.space" />
-        {props.private === false && (
-          <>
-            <title>{props.user.name} short-story.space</title>
-            <meta
-              property="og:title"
-              content={`${props.user.name} short-story.space`}
-            />
-            <meta property="profile:username " content={props.user.name} />
-            <meta property="og:image" content={props.user.icon} />
-            <meta property="og:description" content={""} />
-          </>
-        )}
+        <title>{props.user.name} short-story.space</title>
+        <meta
+          property="og:title"
+          content={`${props.user.name} short-story.space`}
+        />
+        <meta property="profile:username " content={props.user.name} />
+        <meta property="og:image" content={props.user.icon} />
+        <meta property="og:description" content={""} />
       </NextHead>
       <Header />
       <main>

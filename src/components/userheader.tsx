@@ -1,18 +1,12 @@
 import styled from "styled-components";
-import {
-  FC,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-  useEffect,
-} from "react";
+import { FC, useState, useContext, useCallback, useMemo } from "react";
 import PrimaryButton from "~/components/primarybutton";
 import { Context } from "~/modules/auth";
 import ProfileIconEditor from "~/components/profileiconeditor";
 import { css } from "styled-components";
 import { firebaseApp, FirestorePath } from "~/modules/firebase";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
 import Indicator from "~/components/indicator";
 import Image from "next/image";
 
@@ -140,7 +134,9 @@ const UserHeader: FC<HeadingProps> = (props) => {
             key={icon}
             src={icon ?? "/images/user-icon.svg"}
             alt="icon"
-            layout="responsive"
+            layout={"responsive"}
+            quality={50}
+            loading={"lazy"}
             width={200}
             height={200}
           />

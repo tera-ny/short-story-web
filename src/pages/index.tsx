@@ -1,7 +1,7 @@
 import Header from "~/components/header";
 import NextHead from "next/head";
 import Template from "~/template/top";
-import { NextPage, GetServerSideProps } from "next";
+import { NextPage, GetStaticProps } from "next";
 import "firebase/firestore";
 import { firebaseApp } from "~/modules/firebase";
 import { storyConverter, userConverter } from "~/modules/entity";
@@ -14,7 +14,7 @@ interface Props {
   contents: Content[];
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
   const query = firebaseApp()
     .firestore()
     .collectionGroup("stories")
@@ -37,7 +37,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
           const userData = userSnapshot.data();
           return {
             id: snapshot.id,
-            /// /users/${uid}/${stories}/${storyid}
             user: {
               id: userSnapshot.id,
               name: userSnapshot.get("name") ?? "",
@@ -49,10 +48,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
         }
       )
     );
-    return { props: { contents } };
+    return { props: { contents }, revalidate: 120 };
   } catch (e) {
     console.error(e);
-    return { props: { contents: [] } };
+    return { props: { contents: [] }, revalidate: 30 };
   }
 };
 

@@ -1,7 +1,9 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
+import "firebase/storage";
 import { storyConverter, userConverter } from "./entity";
 import { v4 } from "uuid";
-import path from "path";
 
 const devConfig = {
   apiKey: "AIzaSyBzY2-PG4kdtIgST6Zac1BOHeE090QwU-k",
@@ -26,8 +28,10 @@ const prodConfig = {
 const publicBucketName = () => {
   if (process.env.ENDPOINT_FOR_CLIENT === "production") {
     return "public-short-story-prod";
-  } else {
+  } else if (process.env.ENDPOINT_FOR_CLIENT === "development") {
     return "public-short-story-dev";
+  } else {
+    throw new Error("not found endpoint");
   }
 };
 
@@ -37,8 +41,10 @@ export const firebaseApp = () => {
       switch (process.env.ENDPOINT_FOR_CLIENT) {
         case "production":
           return firebase.initializeApp(prodConfig);
-        default:
+        case "development":
           return firebase.initializeApp(devConfig);
+        default:
+          throw new Error("not found endpoint");
       }
     } else {
       return firebase.app();
