@@ -13,7 +13,8 @@ import Button from "~/components/primarybutton";
 import { storyCollectionRef } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import Indicator from "./indicator";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase";
 
 interface Props {
   state: State;

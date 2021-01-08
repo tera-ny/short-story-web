@@ -27,23 +27,18 @@ const Contents = styled.div`
 `;
 
 const User: FC<Props> = (props) => {
-  //Todo: private page
   return (
     <Container>
-      {props.private === false && (
-        <>
-          <Header {...props.user} />
-          <SectionHeader>新しいお話</SectionHeader>
-          <Contents>
-            {props.user &&
-              props.contents.map((content, index) => {
-                return (
-                  <StoryComponent key={index} user={props.user} {...content} />
-                );
-              })}
-          </Contents>
-        </>
-      )}
+      <Header {...props.user} />
+      <SectionHeader>新しいお話</SectionHeader>
+      <Contents>
+        {props.user &&
+          props.contents.map((content, index) => {
+            return (
+              <StoryComponent key={index} user={props.user} {...content} />
+            );
+          })}
+      </Contents>
     </Container>
   );
 };
