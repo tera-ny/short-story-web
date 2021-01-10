@@ -102,10 +102,7 @@ export const uploadIconImage = async (uid: string, image: Blob) => {
   return url;
 };
 
-export const createUser = async (email: string, password: string) => {
-  const credential = await firebaseApp()
-    .auth()
-    .createUserWithEmailAndPassword(email, password);
+export const createUser = async (credential: firebase.auth.UserCredential) => {
   const user = {
     name: 'ユーザー' + credential.user.uid.slice(0, 5),
     createTime: firebase.firestore.FieldValue.serverTimestamp(),

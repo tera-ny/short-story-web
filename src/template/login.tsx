@@ -11,6 +11,8 @@ import { useRouter } from "next/router";
 import { firebaseApp } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import UserForm from "~/components/userform";
+import Link from "next/link";
+import { generateMessage } from "~/modules/auth/error";
 
 const Container = styled.div`
   display: flex;
@@ -23,20 +25,34 @@ const Title = styled.h2`
   font-size: 24px;
   font-weight: 700;
   display: flex;
+  margin: 0;
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    font-size: 18px;
+    font-weight: 500;
+    padding: 24px 0 18px;
+  }
   @media screen and (min-width: 720px) {
-    padding-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 20px 0 28px;
   }
 `;
 
 const Login: FC = () => {
   const [isSigningIn, setIsSigninIn] = useState(false);
+  const [error, setError] = useState<string>();
   const router = useRouter();
   const signIn = useCallback(
     async (email: string, password: string) => {
       if (!isSigningIn) {
         setIsSigninIn(true);
-        //Todo error handling
-        await firebaseApp().auth().signInWithEmailAndPassword(email, password);
+        try {
+          await firebaseApp()
+            .auth()
+            .signInWithEmailAndPassword(email, password);
+        } catch (error) {
+          setError(generateMessage(error));
+        }
         setIsSigninIn(false);
       }
     },
@@ -74,7 +90,15 @@ const Login: FC = () => {
               isSubmitting={isSigningIn}
               submitText={"ログイン"}
               submit={signIn}
+              error={error}
             />
+            <p>
+              アカウント登録は
+              <Link href={"/register"} passHref>
+                <a>こちら</a>
+              </Link>
+              ！
+            </p>
           </Container>
         ) : (
           <></>

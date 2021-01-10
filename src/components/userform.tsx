@@ -30,6 +30,27 @@ const Button = styled.button`
   width: 100%;
   height: 45px;
   cursor: pointer;
+  :disabled {
+    background-color: rgba(38, 38, 38, 0.8);
+    color: rgb(228, 227, 227);
+    cursor: default;
+  }
+`;
+
+const Error = styled.p`
+  margin: 0;
+  color: rgb(243, 59, 59);
+  font-weight: 300;
+  justify-self: center;
+  height: 20px;
+  font-size: 15px;
+`;
+
+const SubContent = styled.div`
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 interface Props {
@@ -38,6 +59,7 @@ interface Props {
   submit: (email: string, password: string) => void;
   validEmail?: (email: string) => boolean;
   validPassword?: (password: string) => boolean;
+  error?: string;
 }
 
 const UserForm: FC<Props> = ({
@@ -46,6 +68,7 @@ const UserForm: FC<Props> = ({
   submit,
   validEmail,
   validPassword,
+  error,
 }) => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
@@ -60,7 +83,12 @@ const UserForm: FC<Props> = ({
   }, [validEmail, validPassword, email, password]);
   return (
     <Form>
-      <FormIndicator visible={isSubmitting} width={30} height={30} />
+      <SubContent>
+        {isSubmitting && (
+          <FormIndicator visible={isSubmitting} width={30} height={30} />
+        )}
+        {error && <Error>{error}</Error>}
+      </SubContent>
       <InputForm title={"メールアドレス"} type="email" changeValue={setEmail} />
       <InputForm
         title={"パスワード"}

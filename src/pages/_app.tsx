@@ -15,6 +15,9 @@ const GrobalStyles = createGlobalStyle`
   body {
     margin: 0;
   }
+  p {
+    font-weight: 300;
+  }
 `;
 
 export default function App({ Component, pageProps }: AppProps) {
