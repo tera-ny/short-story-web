@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { firebaseApp } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import UserForm from "~/components/userform";
+import Link from "next/link";
 
 const Container = styled.div`
   display: flex;
@@ -23,8 +24,16 @@ const Title = styled.h2`
   font-size: 24px;
   font-weight: 700;
   display: flex;
+  margin: 0;
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    font-size: 18px;
+    font-weight: 500;
+    padding: 24px 0 18px;
+  }
   @media screen and (min-width: 720px) {
-    padding-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 20px 0 28px;
   }
 `;
 
@@ -75,6 +84,13 @@ const Login: FC = () => {
               submitText={"ログイン"}
               submit={signIn}
             />
+            <p>
+              アカウント登録は
+              <Link href={"/register"} passHref>
+                <a>こちら</a>
+              </Link>
+              ！
+            </p>
           </Container>
         ) : (
           <></>

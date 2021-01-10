@@ -69,6 +69,8 @@ const PostLink = styled(PrimaryLink)`
   }
 `;
 
+const hiddenLoginPaths = () => ["/login", "/register"];
+
 const Header: VFC = () => {
   const router = useRouter();
   return (
@@ -82,19 +84,21 @@ const Header: VFC = () => {
         <Context.Consumer>
           {(state) => (
             <>
-              {!state.uid && state.subscribed && (
-                <Link
-                  href={{
-                    pathname: "/login",
-                    query: {
-                      redirect_to_path: router.asPath,
-                    },
-                  }}
-                  passHref
-                >
-                  <Login>ログイン</Login>
-                </Link>
-              )}
+              {!state.uid &&
+                state.subscribed &&
+                hiddenLoginPaths().indexOf(router.pathname) < 0 && (
+                  <Link
+                    href={{
+                      pathname: "/login",
+                      query: {
+                        redirect_to_path: router.asPath,
+                      },
+                    }}
+                    passHref
+                  >
+                    <Login>ログイン</Login>
+                  </Link>
+                )}
               {state.uid && router.pathname !== "/new" && (
                 <Link href="/new" passHref>
                   <PostLink>投稿する</PostLink>
