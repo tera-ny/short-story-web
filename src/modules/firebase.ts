@@ -5,47 +5,18 @@ import "firebase/storage";
 import { storyConverter, userConverter } from "./entity";
 import { v4 } from "uuid";
 
-const devConfig = {
-  apiKey: "AIzaSyBzY2-PG4kdtIgST6Zac1BOHeE090QwU-k",
-  authDomain: "short-story-dev.firebaseapp.com",
-  projectId: "short-story-dev",
-  storageBucket: "short-story-dev.appspot.com",
-  messagingSenderId: "58095232709",
-  appId: "1:58095232709:web:533f7a7c11a928b99c32ac",
-  measurementId: "G-BN5XYEWEX7",
-};
-
-const prodConfig = {
-  apiKey: "AIzaSyBQm6jr2WoYliLQ55Q2C1gozsfz1UPnVJE",
-  authDomain: "short-story-prod.firebaseapp.com",
-  projectId: "short-story-prod",
-  storageBucket: "short-story-prod.appspot.com",
-  messagingSenderId: "303500143974",
-  appId: "1:303500143974:web:5605ac3bf4122fe1e72ca7",
-  measurementId: "G-306BSYP0CM",
-};
-
-const publicBucketName = () => {
-  if (process.env.ENDPOINT_FOR_CLIENT === "production") {
-    return "public-short-story-prod";
-  } else if (process.env.ENDPOINT_FOR_CLIENT === "development") {
-    return "public-short-story-dev";
-  } else {
-    throw new Error("not found endpoint");
-  }
-};
-
 export const firebaseApp = () => {
   try {
     if (!firebase.apps.length) {
-      switch (process.env.ENDPOINT_FOR_CLIENT) {
-        case "production":
-          return firebase.initializeApp(prodConfig);
-        case "development":
-          return firebase.initializeApp(devConfig);
-        default:
-          throw new Error("not found endpoint");
-      }
+      return firebase.initializeApp({
+        apiKey: process.env.API_KEY_FOR_CLIENT,
+        authDomain: process.env.AUTH_DOMAIN_FOR_CLIENT,
+        projectId: process.env.PROJECT_ID_FOR_CLIENT,
+        storageBucket: process.env.STORAGE_BUCKET_FOR_CLIENT,
+        messagingSenderId: process.env.MESSAGING_SENDER_ID_FOR_CLIENT,
+        appId: process.env.APP_ID_FOR_CLIENT,
+        measurementId: process.env.MEASUREMENT_ID_FOR_CLIENT,
+      })
     } else {
       return firebase.app();
     }
@@ -111,7 +82,7 @@ const imageExtension = (mimeType: string) => {
 export const uploadPublicImage = async (image: Blob) => {
   const name = v4() + imageExtension(image.type);
   await firebaseApp()
-    .storage(`gs://${publicBucketName()}`)
+    .storage(`gs://${process.env.PUBLIC_STORAGE_ENDPOINT_FOR_CLIENT}`)
     .ref("images")
     .child(name)
     .put(image, { contentType: image.type });
@@ -120,7 +91,7 @@ export const uploadPublicImage = async (image: Blob) => {
 
 export const uploadIconImage = async (uid: string, image: Blob) => {
   const { name } = await uploadPublicImage(image);
-  const url = `https://storage.googleapis.com/${publicBucketName()}/images/${name}`;
+  const url = `https://storage.googleapis.com/${process.env.PUBLIC_STORAGE_ENDPOINT_FOR_CLIENT}/images/${name}`;
   await firebaseApp().firestore().collection(FirestorePath.user).doc(uid).set(
     {
       icon: url,
@@ -130,3 +101,21 @@ export const uploadIconImage = async (uid: string, image: Blob) => {
   );
   return url;
 };
+
+export const createUser = async (email: string, password: string) => {
+  const credential = await firebaseApp()
+    .auth()
+    .createUserWithEmailAndPassword(email, password);
+  const user = {
+    name: 'ユーザー' + credential.user.uid.slice(0, 5),
+    createTime: firebase.firestore.FieldValue.serverTimestamp(),
+    updateTime: firebase.firestore.FieldValue.serverTimestamp(),
+    isActive: true,
+  }
+  await firebaseApp()
+    .firestore()
+    .collection(FirestorePath.user)
+    .doc(credential.user.uid)
+    .set(user);
+  return { uid: credential.user.uid }
+}

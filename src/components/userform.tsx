@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import Indicator from "~/components/indicator";
 import InputForm from "~/components/inputform";
 import styled from "styled-components";
@@ -29,30 +29,46 @@ const Button = styled.button`
   max-width: 400px;
   width: 100%;
   height: 45px;
+  cursor: pointer;
 `;
 
 interface Props {
-  isSigningIn: boolean;
-  signIn: (email: string, password: string) => void;
+  isSubmitting: boolean;
+  submitText: string;
+  submit: (email: string, password: string) => void;
+  validEmail?: (email: string) => boolean;
+  validPassword?: (password: string) => boolean;
 }
 
-const UserForm: FC<Props> = (props) => {
+const UserForm: FC<Props> = ({
+  isSubmitting,
+  submitText,
+  submit,
+  validEmail,
+  validPassword,
+}) => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
-  const signIn = useCallback(() => {
-    props.signIn(email, password);
-  }, [email, password, props.signIn]);
+  const onSubmit = useCallback(() => {
+    submit(email, password);
+  }, [email, password, submit]);
+  const validate = useMemo(() => {
+    return (
+      (validEmail ? validEmail(email) : true) &&
+      (validPassword ? validPassword(password) : true)
+    );
+  }, [validEmail, validPassword, email, password]);
   return (
     <Form>
-      <FormIndicator visible={props.isSigningIn} width={30} height={30} />
+      <FormIndicator visible={isSubmitting} width={30} height={30} />
       <InputForm title={"メールアドレス"} type="email" changeValue={setEmail} />
       <InputForm
         title={"パスワード"}
         type="password"
         changeValue={setPassword}
       />
-      <Button disabled={props.isSigningIn} onClick={signIn}>
-        ログイン
+      <Button disabled={isSubmitting || !validate} onClick={onSubmit}>
+        {submitText}
       </Button>
     </Form>
   );

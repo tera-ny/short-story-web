@@ -1,6 +1,11 @@
-import { NextPage } from "next";
+import { NextPage, GetStaticProps } from "next";
 import NextHead from "next/head";
 import Header from "~/components/header";
+import RegisterTemplate from "~/template/register";
+
+export const getStaticProps: GetStaticProps = async () => {
+  return { props: {} };
+};
 
 const RegisterPage: NextPage = () => {
   return (
@@ -18,7 +23,9 @@ const RegisterPage: NextPage = () => {
         />
       </NextHead>
       <Header />
-      <main></main>
+      <main>
+        <RegisterTemplate />
+      </main>
     </>
   );
 };
