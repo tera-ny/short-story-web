@@ -8,6 +8,12 @@ export const generateMessage = (error: firebase.auth.Error) => {
     return '使用できないメールアドレスです'
   } else if (error.code === 'auth/weak-password') {
     return 'パスワードが脆弱です'
+  } else if (error.code === 'auth/user-disabled') {
+    return 'ユーザーが無効化されています'
+  } else if (error.code === 'auth/user-not-found') {
+    return 'ユーザーが見つかりませんでした'
+  } else if (error.code === 'auth/wrong-password') {
+    return 'パスワードが異なります'
   } else {
     return '予期せぬエラーが発生しました'
   }

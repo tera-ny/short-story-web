@@ -12,6 +12,7 @@ import { firebaseApp } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import UserForm from "~/components/userform";
 import Link from "next/link";
+import { generateMessage } from "~/modules/auth/error";
 
 const Container = styled.div`
   display: flex;
@@ -39,13 +40,19 @@ const Title = styled.h2`
 
 const Login: FC = () => {
   const [isSigningIn, setIsSigninIn] = useState(false);
+  const [error, setError] = useState<string>();
   const router = useRouter();
   const signIn = useCallback(
     async (email: string, password: string) => {
       if (!isSigningIn) {
         setIsSigninIn(true);
-        //Todo error handling
-        await firebaseApp().auth().signInWithEmailAndPassword(email, password);
+        try {
+          await firebaseApp()
+            .auth()
+            .signInWithEmailAndPassword(email, password);
+        } catch (error) {
+          setError(generateMessage(error));
+        }
         setIsSigninIn(false);
       }
     },
@@ -83,6 +90,7 @@ const Login: FC = () => {
               isSubmitting={isSigningIn}
               submitText={"ログイン"}
               submit={signIn}
+              error={error}
             />
             <p>
               アカウント登録は
