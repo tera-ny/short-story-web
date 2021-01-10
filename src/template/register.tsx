@@ -8,7 +8,7 @@ import {
 } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { firebaseApp } from "~/modules/firebase";
+import { createUser } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import UserForm from "~/components/userform";
 
@@ -29,18 +29,22 @@ const Title = styled.h2`
 `;
 
 const Login: FC = () => {
-  const [isSigningIn, setIsSigninIn] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
-  const signIn = useCallback(
+  const authContext = useContext(Context);
+  const callCreateUser = useCallback(
     async (email: string, password: string) => {
-      if (!isSigningIn) {
-        setIsSigninIn(true);
-        //Todo error handling
-        await firebaseApp().auth().signInWithEmailAndPassword(email, password);
-        setIsSigninIn(false);
+      if (
+        isCreating === false &&
+        authContext.uid === undefined &&
+        authContext.subscribed
+      ) {
+        setIsCreating(true);
+        await createUser(email, password);
+        setIsCreating(false);
       }
     },
-    [isSigningIn]
+    [isCreating, authContext.uid, authContext.subscribed]
   );
   const context = useContext(Context);
   const [path, as] = useMemo(() => {
@@ -53,8 +57,7 @@ const Login: FC = () => {
     ];
   }, [router.query]);
   useEffect(() => {
-    console.log(path, as);
-    if (context.uid) {
+    if (context.uid && !isCreating) {
       if (path && as) {
         router.push(path, as);
       } else if (path) {
@@ -63,17 +66,17 @@ const Login: FC = () => {
         router.push("/");
       }
     }
-  }, [path, as, router, context.uid]);
+  }, [path, as, router, context.uid, isCreating]);
   return (
     <Context.Consumer>
       {(state) =>
         !state.uid && state.subscribed ? (
           <Container>
-            <Title>short-story.spaceにログイン</Title>
+            <Title>short-story.spaceアカウントを作成する</Title>
             <UserForm
-              isSubmitting={isSigningIn}
-              submitText={"ログイン"}
-              submit={signIn}
+              isSubmitting={isCreating}
+              submitText={"アカウントを作成"}
+              submit={callCreateUser}
             />
           </Container>
         ) : (

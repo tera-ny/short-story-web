@@ -1,26 +1,12 @@
-import { NextPage, GetServerSideProps } from "next";
+import { NextPage, GetStaticProps } from "next";
 import NextHead from "next/head";
 import LoginTemplate from "~/template/login";
 
-interface Props {
-  path: string | null;
-  as: string | null;
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const as = context.query.redirect_to_as;
-  const path = context.query.redirect_to_path;
-  return {
-    props: {
-      path: typeof path === "string" ? path : null,
-      as: typeof as === "string" ? as : null,
-    },
-  };
+export const getStaticProps: GetStaticProps = async () => {
+  return { props: {} };
 };
 
-const Login: NextPage<Props> = (props) => (
+const Login: NextPage = () => (
   <>
     <NextHead>
       <meta property="og:title" content="short-story.space ログイン" />
@@ -32,7 +18,7 @@ const Login: NextPage<Props> = (props) => (
       />
     </NextHead>
     <main>
-      <LoginTemplate {...props} />
+      <LoginTemplate />
     </main>
   </>
 );
