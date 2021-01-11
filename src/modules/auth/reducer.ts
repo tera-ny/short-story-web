@@ -2,7 +2,10 @@ import { Reducer } from "react";
 import firebase from 'firebase'
 
 export interface State {
-  uid?: string
+  user?: {
+    uid: string,
+    emailVerified: boolean
+  }
   subscribed: boolean
 }
 
@@ -15,12 +18,18 @@ export type Action = {
   payload: { user: firebase.User | null }
 }
 
-export const initialState: State = ({ subscribed: false, uid: undefined })
+export const initialState: State = ({ subscribed: false, user: undefined })
 
 export const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case ActionType.changed:
-      return { subscribed: true, uid: action.payload.user?.uid };
+      const user = action.payload.user ? {
+        uid: action.payload.user.uid,
+        emailVerified: action.payload.user.emailVerified
+      } : undefined
+      return {
+        subscribed: true, user: user
+      };
     default:
       return state;
   }

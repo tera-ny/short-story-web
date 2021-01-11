@@ -37,7 +37,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       user = {
         id: userSnapshot.id,
         name: userSnapshot.get("name"),
-        icon: userSnapshot.get("icon"),
+        icon: userSnapshot.get("icon") ?? null,
       };
     } catch {
       return { notFound: true };

@@ -70,7 +70,7 @@ const Login: FC = () => {
   }, [router.query]);
   useEffect(() => {
     console.log(path, as);
-    if (context.uid) {
+    if (context.user) {
       if (path && as) {
         router.push(path, as);
       } else if (path) {
@@ -79,11 +79,11 @@ const Login: FC = () => {
         router.push("/");
       }
     }
-  }, [path, as, router, context.uid]);
+  }, [path, as, router, context.user]);
   return (
     <Context.Consumer>
       {(state) =>
-        !state.uid && state.subscribed ? (
+        !state.user && state.subscribed ? (
           <Container>
             <Title>short-story.spaceにログイン</Title>
             <UserForm

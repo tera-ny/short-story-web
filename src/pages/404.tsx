@@ -18,7 +18,7 @@ const Notfound: NextPage = () => (
         </p>
         <Context.Consumer>
           {(state) =>
-            !state.uid &&
+            !state.user &&
             state.subscribed && (
               <p>
                 心当たりが無い場合お手数ですがログインを行い、再度ページの確認をお願いします。

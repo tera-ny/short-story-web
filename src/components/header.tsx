@@ -84,7 +84,7 @@ const Header: VFC = () => {
         <Context.Consumer>
           {(state) => (
             <>
-              {!state.uid &&
+              {!state.user &&
                 state.subscribed &&
                 hiddenLoginPaths().indexOf(router.pathname) < 0 && (
                   <Link
@@ -99,7 +99,7 @@ const Header: VFC = () => {
                     <Login>ログイン</Login>
                   </Link>
                 )}
-              {state.uid && router.pathname !== "/new" && (
+              {state.user && router.pathname !== "/new" && (
                 <Link href="/new" passHref>
                   <PostLink>投稿する</PostLink>
                 </Link>

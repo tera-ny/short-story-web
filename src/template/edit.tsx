@@ -20,11 +20,11 @@ const Edit: FC<Props> = (props) => {
   const [notfound, setNotfound] = useState<boolean>();
   const router = useRouter();
   useEffect(() => {
-    if (context.uid) {
+    if (context.user) {
       let unmounted = false;
       (async () => {
         try {
-          const story = (await fetchStory(context.uid, props.id)).data();
+          const story = (await fetchStory(context.user.uid, props.id)).data();
           if (!unmounted) {
             dispatch({
               type: ActionType.fetchData,
@@ -42,16 +42,16 @@ const Edit: FC<Props> = (props) => {
         unmounted = true;
       };
     }
-  }, [props.id, context.uid]);
+  }, [props.id, context.user]);
 
   useEffect(() => {
-    if (state.submitted && context.uid) {
+    if (state.submitted && context.user) {
       router.push({
         pathname: "/users/[userid]/stories/[storyid]",
-        query: { userid: context.uid, storyid: props.id },
+        query: { userid: context.user.uid, storyid: props.id },
       });
     }
-  }, [state.submitted, context.uid]);
+  }, [state.submitted, context.user]);
 
   if (notfound) {
     return <Notfound />;

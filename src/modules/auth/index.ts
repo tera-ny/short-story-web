@@ -6,6 +6,7 @@ import AuthContext from './context'
 export const listen = (dispatch: Dispatch<Action>) => {
   const auth = firebaseApp().auth()
   return auth.onAuthStateChanged((user) => {
+    console.log(user)
     dispatch({
       type: ActionType.changed,
       payload: { user }

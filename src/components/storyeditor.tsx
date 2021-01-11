@@ -158,7 +158,7 @@ const Editor: FC<Props> = (props) => {
     }
   }, [length, props.state.limit]);
   const submit = useCallback(async () => {
-    if (!authContext.uid) {
+    if (!authContext.user) {
       return;
     }
     const state = props.state;
@@ -176,7 +176,7 @@ const Editor: FC<Props> = (props) => {
           { merge: true }
         );
       } else {
-        ref = await storyCollectionRef(authContext.uid).add({
+        ref = await storyCollectionRef(authContext.user.uid).add({
           title: state.title,
           body: state.body,
           isActive: true,
@@ -190,7 +190,7 @@ const Editor: FC<Props> = (props) => {
     } catch {
       setIsUpdating(false);
     }
-  }, [props.state, authContext.uid]);
+  }, [props.state, authContext.user]);
   const toggleDisabledNote = useCallback(() => {
     setDisabledNote(!disabledNote);
   }, [disabledNote]);
