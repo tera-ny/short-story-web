@@ -59,6 +59,7 @@ const Login: FC = () => {
           credential = await firebaseApp()
             .auth()
             .createUserWithEmailAndPassword(email, password);
+          await credential.user.sendEmailVerification();
         } catch (error) {
           setIsCreating(false);
           setError(generateMessage(error));
