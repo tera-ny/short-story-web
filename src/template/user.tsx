@@ -21,9 +21,6 @@ const Contents = styled.div`
   width: 100%;
   padding: 0 10px 70px;
   box-sizing: border-box;
-  > :not(:last-child) {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-  }
 `;
 
 const User: FC<Props> = (props) => {

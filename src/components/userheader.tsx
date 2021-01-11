@@ -104,13 +104,13 @@ const UserHeader: FC<HeadingProps> = (props) => {
   const context = useContext(Context);
 
   const submit = useCallback(async () => {
-    if (editingName && context.user) {
+    if (editingName && context.auth?.user) {
       try {
         setIsUploading(true);
         await firebaseApp()
           .firestore()
           .collection(FirestorePath.user)
-          .doc(context.user.uid)
+          .doc(context.auth.user.uid)
           .set(
             {
               name: editingName,
@@ -123,9 +123,10 @@ const UserHeader: FC<HeadingProps> = (props) => {
         setIsEditing(false);
       } catch (e) {
         console.error(e);
+        setIsUploading(false);
       }
     }
-  }, [editingName, context.user]);
+  }, [editingName, context.auth]);
 
   const callSendEmail = useCallback(async () => {
     await sendEmailVerification();
@@ -149,9 +150,12 @@ const UserHeader: FC<HeadingProps> = (props) => {
             width={200}
             height={200}
           />
-          {isEditing && context.user && (
+          {isEditing && context.auth?.user && (
             <>
-              <ProfileIconEditor uploaded={setIcon} uid={context.user.uid} />
+              <ProfileIconEditor
+                uploaded={setIcon}
+                uid={context.auth.user.uid}
+              />
             </>
           )}
         </ImageContainer>
@@ -173,15 +177,15 @@ const UserHeader: FC<HeadingProps> = (props) => {
           </div>
         )}
       </ProfileContainer>
-      {context.user && (
+      {context.auth && (
         <>
-          {context.user.uid === props.id ? (
+          {context.auth.user?.uid === props.id ? (
             <>
               <ActionButton
                 onClick={() => {
                   if (isEditing && hasNameDifference) {
                     submit();
-                  } else if (context.user.emailVerified) {
+                  } else if (context.auth.user.emailVerified) {
                     setIsEditing(!isEditing);
                   } else {
                     callSendEmail();
@@ -193,7 +197,7 @@ const UserHeader: FC<HeadingProps> = (props) => {
                   ? hasNameDifference
                     ? "保存して編集を終了する"
                     : "編集を終了する"
-                  : context.user.emailVerified
+                  : context.auth.user.emailVerified
                   ? "プロフィールを編集"
                   : "本人確認メールを送信"}
               </ActionButton>

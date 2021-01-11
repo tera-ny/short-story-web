@@ -12,23 +12,21 @@ export interface Props {
 
 const Container = styled.div`
   padding: 20px;
-  display: grid;
-  justify-content: space-between;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-self: center;
   width: 100%;
-  gap: 20px;
   box-sizing: border-box;
   > * {
-    grid-column: 1/ 3;
     max-width: 720px;
-  }
-  > div {
-    justify-self: center;
   }
 `;
 
 const EditLink = styled(PrimaryLink)`
-  grid-column: 2 / 3;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
 `;
 
 const Details: FC<Props> = ({ content }) => {

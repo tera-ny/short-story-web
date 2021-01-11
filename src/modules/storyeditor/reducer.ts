@@ -1,5 +1,6 @@
 import { Reducer } from "react";
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
 import { Story } from "../entity";
 import { firebaseApp, FirestorePath } from "../firebase";
 
@@ -25,11 +26,11 @@ export type Action = {
   payload: { text: string }
 } | { type: ActionType.submitted, payload: { ref: firebase.firestore.DocumentReference } } | {
   type: ActionType.fetchData,
-  payload: { id: string, story: Story }
+  payload: { ref: firebase.firestore.DocumentReference, story: Story }
 }
 
-export const mergeState = (id: string, story: Story, currentState: State): State => {
-  return { ...currentState, ...story, ref: firebaseApp().firestore().collection(FirestorePath.story).doc(id) }
+export const mergeState = (ref: firebase.firestore.DocumentReference, story: Story, currentState: State): State => {
+  return { ...currentState, ...story, ref: ref }
 }
 
 export const initialState: State = ({ title: '', body: '', isActive: true, isPublished: true, limit: 1000, submitted: false })
@@ -43,7 +44,7 @@ export const reducer: Reducer<State, Action> = (state, action) => {
     case ActionType.submitted:
       return { ...state, ref: action.payload.ref, submitted: true }
     case ActionType.fetchData:
-      return mergeState(action.payload.id, action.payload.story, state)
+      return mergeState(action.payload.ref, action.payload.story, state)
     default:
       return state;
   }

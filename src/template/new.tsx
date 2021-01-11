@@ -13,19 +13,15 @@ const New: FC = () => {
   const context = useContext(Context);
 
   useEffect(() => {
-    if (state.ref && context.user) {
-      router.push(`/users/${context.user.uid}/stories/${state.ref.id}`);
+    if (state.ref && context.auth?.user) {
+      router.push(`/users/${context.auth.user.uid}/stories/${state.ref.id}`);
     }
-  }, [state.ref, context.user]);
+  }, [state.ref, context.auth]);
 
   return (
     <Context.Consumer>
       {(authState) =>
-        authState.user && authState.subscribed ? (
-          <StoryEditor state={state} dispatch={dispatch} />
-        ) : (
-          <></>
-        )
+        authState.auth && <StoryEditor state={state} dispatch={dispatch} />
       }
     </Context.Consumer>
   );
