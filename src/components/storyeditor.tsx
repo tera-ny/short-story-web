@@ -158,7 +158,7 @@ const Editor: FC<Props> = (props) => {
     }
   }, [length, props.state.limit]);
   const submit = useCallback(async () => {
-    if (!authContext.uid) {
+    if (!authContext.auth?.user) {
       return;
     }
     const state = props.state;
@@ -167,16 +167,13 @@ const Editor: FC<Props> = (props) => {
       let ref: firebase.firestore.DocumentReference;
       if (state.ref) {
         ref = state.ref;
-        await ref.set(
-          {
-            title: state.title,
-            body: state.body,
-            updateTime: firebase.firestore.FieldValue.serverTimestamp(),
-          },
-          { merge: true }
-        );
+        await ref.update({
+          title: state.title,
+          body: state.body,
+          updateTime: firebase.firestore.FieldValue.serverTimestamp(),
+        });
       } else {
-        ref = await storyCollectionRef(authContext.uid).add({
+        ref = await storyCollectionRef(authContext.auth.user.uid).add({
           title: state.title,
           body: state.body,
           isActive: true,
@@ -187,10 +184,11 @@ const Editor: FC<Props> = (props) => {
       }
       setIsUpdating(false);
       props.dispatch({ type: ActionType.submitted, payload: { ref: ref } });
-    } catch {
+    } catch (error) {
+      console.error(error);
       setIsUpdating(false);
     }
-  }, [props.state, authContext.uid]);
+  }, [props.state, authContext.auth]);
   const toggleDisabledNote = useCallback(() => {
     setDisabledNote(!disabledNote);
   }, [disabledNote]);

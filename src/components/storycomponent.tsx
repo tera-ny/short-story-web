@@ -27,20 +27,25 @@ const StoryContainer = styled.div`
 const Title = styled.h3`
   margin: 0;
   font-weight: 500;
+  text-align: left;
   > a {
     color: black;
     text-decoration: solid;
   }
   @media screen and (min-width: 0) and (max-width: 719px) {
-    padding: 8px 0;
+    padding: 8px 0 0;
     font-size: 20px;
-    text-align: left;
   }
   @media screen and (min-width: 720px) {
-    padding: 18px 0;
+    padding: 18px 0 0;
     font-size: 24px;
-    text-align: center;
   }
+`;
+
+const Separator = styled.hr`
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
 const Body = styled.p`
@@ -48,6 +53,7 @@ const Body = styled.p`
   font-weight: 300;
   line-height: 230%;
   margin: 0;
+  padding: 30px 0;
   @media screen and (min-width: 0) and (max-width: 719px) {
     font-size: 14px;
     text-align: left;
@@ -62,26 +68,15 @@ const User = styled.a`
   color: rgba(0, 0, 0, 0.8);
   text-decoration: none;
   box-sizing: border-box;
-  @media screen and (min-width: 0) and (max-width: 719px) {
-    text-align: right;
-    justify-self: flex-end;
-  }
-  @media screen and (min-width: 720px) {
-    text-align: center;
-    justify-self: center;
-  }
+  text-align: right;
+  justify-self: flex-end;
 `;
 
 const TimeStamp = styled.p`
   align-self: center;
-  @media screen and (min-width: 0) and (max-width: 719px) {
-    text-align: right;
-    justify-self: flex-end;
-  }
-  @media screen and (min-width: 720px) {
-    text-align: center;
-    justify-self: center;
-  }
+  text-align: right;
+  justify-self: flex-end;
+  margin: 0;
 `;
 
 const StoryComponent: FC<
@@ -94,6 +89,7 @@ const StoryComponent: FC<
           <a>{props.title}</a>
         </Link>
       </Title>
+      <Separator />
       <Body>{props.body}</Body>
       {props.displayUser && (
         <Link href={`/users/${props.user.id}`} passHref>

@@ -24,21 +24,13 @@ const NotFound = styled.div`
   margin: 100px auto 0;
 `;
 
-const Items = styled.div`
-  > :not(:last-child) {
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.5);
-  }
-`;
-
 const Template: FC<Props> = (props) => (
   <Container>
     <Heading>新着のお話</Heading>
-    <Items>
-      {props.contents &&
-        props.contents.map((content, index) => (
-          <StoryComponent {...content} key={index} displayUser={true} />
-        ))}
-    </Items>
+    {props.contents &&
+      props.contents.map((content, index) => (
+        <StoryComponent {...content} key={index} displayUser={true} />
+      ))}
     {!props.contents && <NotFound>お話がありません</NotFound>}
   </Container>
 );

@@ -4,7 +4,11 @@ import PrimaryButton from "~/components/primarybutton";
 import { Context } from "~/modules/auth";
 import ProfileIconEditor from "~/components/profileiconeditor";
 import { css } from "styled-components";
-import { firebaseApp, FirestorePath } from "~/modules/firebase";
+import {
+  firebaseApp,
+  FirestorePath,
+  sendEmailVerification,
+} from "~/modules/firebase";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import Indicator from "~/components/indicator";
@@ -100,13 +104,13 @@ const UserHeader: FC<HeadingProps> = (props) => {
   const context = useContext(Context);
 
   const submit = useCallback(async () => {
-    if (editingName && context.uid) {
+    if (editingName && context.auth?.user) {
       try {
         setIsUploading(true);
         await firebaseApp()
           .firestore()
           .collection(FirestorePath.user)
-          .doc(context.uid)
+          .doc(context.auth.user.uid)
           .set(
             {
               name: editingName,
@@ -119,9 +123,15 @@ const UserHeader: FC<HeadingProps> = (props) => {
         setIsEditing(false);
       } catch (e) {
         console.error(e);
+        setIsUploading(false);
       }
     }
-  }, [editingName, context.uid]);
+  }, [editingName, context.auth]);
+
+  const callSendEmail = useCallback(async () => {
+    await sendEmailVerification();
+  }, []);
+
   const hasNameDifference = useMemo(() => {
     return confirmedName !== editingName;
   }, [confirmedName, editingName]);
@@ -140,9 +150,12 @@ const UserHeader: FC<HeadingProps> = (props) => {
             width={200}
             height={200}
           />
-          {isEditing && context.uid && (
+          {isEditing && context.auth?.user && (
             <>
-              <ProfileIconEditor uploaded={setIcon} uid={context.uid} />
+              <ProfileIconEditor
+                uploaded={setIcon}
+                uid={context.auth.user.uid}
+              />
             </>
           )}
         </ImageContainer>
@@ -159,19 +172,23 @@ const UserHeader: FC<HeadingProps> = (props) => {
             <UploadIndicator visible={isUploading} width={20} height={20} />
           </>
         ) : (
-          <Name>{confirmedName}</Name>
+          <div>
+            <Name>{confirmedName}</Name>
+          </div>
         )}
       </ProfileContainer>
-      {context.uid && (
+      {context.auth && (
         <>
-          {context.uid === props.id ? (
+          {context.auth.user?.uid === props.id ? (
             <>
               <ActionButton
                 onClick={() => {
                   if (isEditing && hasNameDifference) {
                     submit();
-                  } else {
+                  } else if (context.auth.user.emailVerified) {
                     setIsEditing(!isEditing);
+                  } else {
+                    callSendEmail();
                   }
                 }}
                 disabled={(!canSubmit && isEditing) || isUploading}
@@ -180,7 +197,9 @@ const UserHeader: FC<HeadingProps> = (props) => {
                   ? hasNameDifference
                     ? "保存して編集を終了する"
                     : "編集を終了する"
-                  : "プロフィールを編集"}
+                  : context.auth.user.emailVerified
+                  ? "プロフィールを編集"
+                  : "本人確認メールを送信"}
               </ActionButton>
             </>
           ) : (

@@ -49,8 +49,8 @@ const Login: FC = () => {
     async (email: string, password: string) => {
       if (
         isCreating === false &&
-        authContext.uid === undefined &&
-        authContext.subscribed
+        authContext.auth &&
+        authContext.auth.user === undefined
       ) {
         setIsCreating(true);
         setError(undefined);
@@ -59,6 +59,7 @@ const Login: FC = () => {
           credential = await firebaseApp()
             .auth()
             .createUserWithEmailAndPassword(email, password);
+          await credential.user.sendEmailVerification();
         } catch (error) {
           setIsCreating(false);
           setError(generateMessage(error));
@@ -68,9 +69,8 @@ const Login: FC = () => {
         setIsCreating(false);
       }
     },
-    [isCreating, authContext.uid, authContext.subscribed]
+    [isCreating, authContext.auth]
   );
-  const context = useContext(Context);
   const [path, as] = useMemo(() => {
     const query = router.query;
     const path = query.redirect_to_path;
@@ -81,7 +81,7 @@ const Login: FC = () => {
     ];
   }, [router.query]);
   useEffect(() => {
-    if (context.uid && !isCreating) {
+    if (authContext.auth && !isCreating) {
       if (path && as) {
         router.push(path, as);
       } else if (path) {
@@ -90,11 +90,12 @@ const Login: FC = () => {
         router.push("/");
       }
     }
-  }, [path, as, router, context.uid, isCreating]);
+  }, [path, as, router, authContext.auth, isCreating]);
   return (
     <Context.Consumer>
       {(state) =>
-        !state.uid && state.subscribed ? (
+        state.auth &&
+        !state.auth.user && (
           <Container>
             <Title>short-story.spaceアカウントを作成する</Title>
             <UserForm
@@ -111,8 +112,6 @@ const Login: FC = () => {
               ！
             </p>
           </Container>
-        ) : (
-          <></>
         )
       }
     </Context.Consumer>

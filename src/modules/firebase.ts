@@ -116,3 +116,10 @@ export const createUser = async (credential: firebase.auth.UserCredential) => {
     .set(user);
   return { uid: credential.user.uid }
 }
+
+export const sendEmailVerification = async () => {
+  const user = firebaseApp().auth().currentUser
+  if (user) {
+    await user.sendEmailVerification()
+  }
+}
