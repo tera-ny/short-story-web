@@ -7,12 +7,15 @@ import { format } from "~/modules/date";
 import NextHead from "next/head";
 import { Content } from "~/components/storycomponent";
 
+interface User {
+  id: string;
+  name: string;
+  icon: string | null;
+  aboutMe: string | null;
+}
+
 export type Props = {
-  user: {
-    id: string;
-    name: string;
-    icon: string | null;
-  };
+  user: User;
   contents: Content[];
 };
 
@@ -23,11 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const uid = params.userid;
   if (typeof uid === "string") {
-    let user: {
-      id: string;
-      name: string;
-      icon: string | null;
-    };
+    let user: User;
     const userRef = firebaseApp()
       .firestore()
       .collection(FirestorePath.user)
@@ -38,6 +37,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
         id: userSnapshot.id,
         name: userSnapshot.get("name"),
         icon: userSnapshot.get("icon") ?? null,
+        aboutMe: userSnapshot.get("aboutMe") ?? null,
       };
     } catch {
       return { notFound: true };
@@ -86,13 +86,13 @@ const User: NextPage<Props> = (props) => {
         <meta property="og:type" content="profile" />
         <meta property="og:site_name" content="short-story.space" />
         <title>{props.user.name} short-story.space</title>
-        <meta
-          property="og:title"
-          content={`${props.user.name} short-story.space`}
-        />
+        <meta property="og:title" content={`${props.user.name}`} />
         <meta property="profile:username " content={props.user.name} />
         <meta property="og:image" content={props.user.icon} />
-        <meta property="og:description" content={""} />
+        <meta
+          property="og:description"
+          content={props.user.aboutMe.slice(0, 100) ?? ""}
+        />
       </NextHead>
       <Header />
       <main>
