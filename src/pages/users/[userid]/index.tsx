@@ -86,10 +86,7 @@ const User: NextPage<Props> = (props) => {
         <meta property="og:type" content="profile" />
         <meta property="og:site_name" content="short-story.space" />
         <title>{props.user.name} short-story.space</title>
-        <meta
-          property="og:title"
-          content={`${props.user.name} short-story.space`}
-        />
+        <meta property="og:title" content={`${props.user.name}`} />
         <meta property="profile:username " content={props.user.name} />
         <meta property="og:image" content={props.user.icon} />
         <meta
