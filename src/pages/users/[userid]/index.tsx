@@ -91,7 +91,7 @@ const User: NextPage<Props> = (props) => {
         <meta property="og:image" content={props.user.icon} />
         <meta
           property="og:description"
-          content={props.user.aboutMe.slice(0, 100) ?? ""}
+          content={props.user.aboutMe?.slice(0, 40) ?? ""}
         />
       </NextHead>
       <Header />
