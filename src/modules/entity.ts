@@ -16,6 +16,7 @@ export interface Story extends TimeStamps {
 export interface User extends TimeStamps {
   name: string;
   icon?: string;
+  aboutMe?: string;
 }
 
 export const storyConverter: firebase.firestore.FirestoreDataConverter<Story> = {
