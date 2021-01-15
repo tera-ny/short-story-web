@@ -21,8 +21,23 @@ const NameStyle = css`
   margin: 0;
 `;
 
+const AboutMeStyle = css`
+  font-weight: 300;
+  margin: 0;
+  text-align: center;
+`;
+
 const Name = styled.h1`
   ${NameStyle}
+`;
+
+const AboutMe = styled.p`
+  ${AboutMeStyle}
+  max-width: 500px;
+  padding: 10px 20px 0;
+  font-size: 13px;
+  line-height: 180%;
+  white-space: pre-wrap;
 `;
 
 const ProfileContainer = styled.div`
@@ -66,11 +81,16 @@ const NameInput = styled.input`
   ${NameStyle}
 `;
 
-interface HeadingProps {
-  name: string;
-  icon?: string;
-  id: string;
-}
+const AboutMeTextArea = styled.textarea`
+  outline: none;
+  border: none;
+  resize: none;
+  height: 60px;
+  width: 100%;
+  max-width: 500px;
+  font-size: 16px;
+  ${AboutMeStyle}
+`;
 
 const UploadIndicator = styled(Indicator)`
   justify-self: center;
@@ -85,21 +105,29 @@ const HeadingContainer = styled.div<HeadingContainerProps>`
   display: grid;
   row-gap: ${(p) => (p.isEditing ? "20px" : "52px")};
   justify-content: stretch;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
   @media screen and (min-width: 0) and (max-width: 719px) {
-    padding: 60px 0 40px;
+    padding: 60px 20px 40px;
   }
   @media screen and (min-width: 720px) {
     padding: 100px 0 80px;
   }
 `;
 
-const nameInputID = "name_input";
+interface HeadingProps {
+  name: string;
+  icon?: string;
+  id: string;
+  aboutMe?: string;
+}
 
 const UserHeader: FC<HeadingProps> = (props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [icon, setIcon] = useState(props.icon);
-  const [confirmedName, setConfirmedName] = useState(props.name);
   const [editingName, setEditingName] = useState(props.name);
+  const [editingAboutMe, setEditingAboutMe] = useState(props.aboutMe);
   const [isUploading, setIsUploading] = useState(false);
   const context = useContext(Context);
 
@@ -114,11 +142,11 @@ const UserHeader: FC<HeadingProps> = (props) => {
           .set(
             {
               name: editingName,
+              aboutMe: editingAboutMe ?? "",
               updateTime: firebase.firestore.FieldValue.serverTimestamp(),
             },
             { merge: true }
           );
-        setConfirmedName(editingName);
         setIsUploading(false);
         setIsEditing(false);
       } catch (e) {
@@ -126,15 +154,18 @@ const UserHeader: FC<HeadingProps> = (props) => {
         setIsUploading(false);
       }
     }
-  }, [editingName, context.auth]);
+  }, [editingName, editingAboutMe, context.auth]);
 
   const callSendEmail = useCallback(async () => {
     await sendEmailVerification();
   }, []);
 
   const hasNameDifference = useMemo(() => {
-    return confirmedName !== editingName;
-  }, [confirmedName, editingName]);
+    return props.name !== editingName;
+  }, [props.name, editingName]);
+  const hasAboutMeDifference = useMemo(() => {
+    return props.aboutMe !== editingAboutMe;
+  }, [props.aboutMe, editingAboutMe]);
   const canSubmit = useMemo(() => 0 < editingName.length, [editingName]);
   return (
     <HeadingContainer isEditing={isEditing}>
@@ -162,18 +193,24 @@ const UserHeader: FC<HeadingProps> = (props) => {
         {isEditing ? (
           <>
             <NameInput
-              id={nameInputID}
               type="text"
               value={editingName}
               onChange={(e) => {
                 setEditingName(e.target.value);
               }}
             />
+            <AboutMeTextArea
+              value={editingAboutMe}
+              onChange={(e) => {
+                setEditingAboutMe(e.target.value);
+              }}
+            ></AboutMeTextArea>
             <UploadIndicator visible={isUploading} width={20} height={20} />
           </>
         ) : (
           <div>
-            <Name>{confirmedName}</Name>
+            <Name>{props.name}</Name>
+            {props.aboutMe && <AboutMe>{props.aboutMe}</AboutMe>}
           </div>
         )}
       </ProfileContainer>
@@ -183,7 +220,10 @@ const UserHeader: FC<HeadingProps> = (props) => {
             <>
               <ActionButton
                 onClick={() => {
-                  if (isEditing && hasNameDifference) {
+                  if (
+                    isEditing &&
+                    (hasNameDifference || hasAboutMeDifference)
+                  ) {
                     submit();
                   } else if (context.auth.user.emailVerified) {
                     setIsEditing(!isEditing);
@@ -194,7 +234,7 @@ const UserHeader: FC<HeadingProps> = (props) => {
                 disabled={(!canSubmit && isEditing) || isUploading}
               >
                 {isEditing
-                  ? hasNameDifference
+                  ? hasNameDifference || hasAboutMeDifference
                     ? "保存して編集を終了する"
                     : "編集を終了する"
                   : context.auth.user.emailVerified
