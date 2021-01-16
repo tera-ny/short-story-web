@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
 import { Action, ActionType, reducer, initialState } from "./reducer";
-import { firebaseApp, FirestorePath } from "~/modules/firebase";
+import { firebaseApp } from "~/modules/firebase";
 import AuthContext from "./context";
 
 export const listen = (dispatch: Dispatch<Action>) => {

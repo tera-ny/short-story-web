@@ -1,5 +1,12 @@
 import styled from "styled-components";
-import { FC, useState, useContext, useCallback, useMemo } from "react";
+import {
+  FC,
+  useState,
+  useContext,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react";
 import PrimaryButton from "~/components/primarybutton";
 import { Context } from "~/modules/auth";
 import ProfileIconEditor from "~/components/profileiconeditor";
@@ -13,6 +20,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import Indicator from "~/components/indicator";
 import Image from "next/image";
+import Snackbar, { Content as SnackbarContent } from "~/components/snackbar";
 
 const NameStyle = css`
   font-size: 24px;
@@ -34,7 +42,7 @@ const Name = styled.h1`
 const AboutMe = styled.p`
   ${AboutMeStyle}
   max-width: 500px;
-  padding: 10px 20px 0;
+  padding: 22px 20px 0;
   font-size: 13px;
   white-space: pre-wrap;
   text-align: center;
@@ -55,6 +63,7 @@ const ActionButton = styled(PrimaryButton)`
   font-weight: 500;
   padding: 10px 28px;
   justify-self: center;
+  min-width: 125px;
 `;
 
 const CancelButton = styled(ActionButton)`
@@ -87,14 +96,17 @@ const ImageContainer = styled.div`
 `;
 
 const NameInput = styled.input`
+  ${NameStyle}
   outline: none;
   border: none;
-  ${NameStyle}
+  font-family: "Noto Sans JP", sans-serif;
 `;
 
 const AboutMeTextArea = styled.textarea`
+  ${AboutMeStyle}
   outline: none;
   border: 0.5px rgba(0, 0, 0, 0.5) solid;
+  border-radius: 4px;
   resize: vertical;
   min-height: 120px;
   width: 100%;
@@ -102,7 +114,7 @@ const AboutMeTextArea = styled.textarea`
   font-size: 16px;
   padding: 8px;
   box-sizing: border-box;
-  ${AboutMeStyle}
+  font-family: "Noto Sans JP", sans-serif;
 `;
 
 const UploadIndicator = styled(Indicator)`
@@ -120,13 +132,9 @@ const EditorToolBar = styled.div`
   height: 40px;
 `;
 
-interface HeadingContainerProps {
-  isEditing: boolean;
-}
-
-const HeadingContainer = styled.div<HeadingContainerProps>`
+const HeadingContainer = styled.div`
   display: grid;
-  row-gap: ${(p) => (p.isEditing ? "20px" : "52px")};
+  row-gap: 32px;
   justify-content: stretch;
   width: 100%;
   max-width: 500px;
@@ -154,6 +162,16 @@ const UserHeader: FC<HeadingProps> = (props) => {
   const [isUploading, setIsUploading] = useState(false);
   const context = useContext(Context);
 
+  const [snackbar, setSnackbar] = useState<SnackbarContent>(undefined);
+
+  const canSubmit = useMemo(() => 0 < editingName.length, [editingName]);
+
+  useEffect(() => {
+    if (isEditing && snackbar) {
+      setSnackbar(undefined);
+    }
+  }, [snackbar, isEditing]);
+
   const submit = useCallback(async () => {
     if (editingName && context.auth?.user) {
       try {
@@ -172,8 +190,10 @@ const UserHeader: FC<HeadingProps> = (props) => {
           );
         setIsUploading(false);
         setIsEditing(false);
+        setSnackbar({
+          body: "更新完了しました！反映までに1,2分程度かかる場合があります。",
+        });
       } catch (e) {
-        console.error(e);
         setIsUploading(false);
       }
     }
@@ -182,9 +202,9 @@ const UserHeader: FC<HeadingProps> = (props) => {
   const callSendEmail = useCallback(async () => {
     await sendEmailVerification();
   }, []);
-  const canSubmit = useMemo(() => 0 < editingName.length, [editingName]);
+
   return (
-    <HeadingContainer isEditing={isEditing}>
+    <HeadingContainer>
       <ProfileContainer>
         <ImageContainer>
           <Image
@@ -286,6 +306,7 @@ const UserHeader: FC<HeadingProps> = (props) => {
           )}
         </>
       )}
+      {snackbar && <Snackbar {...snackbar} />}
     </HeadingContainer>
   );
 };
