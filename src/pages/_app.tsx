@@ -15,6 +15,9 @@ const GrobalStyles = createGlobalStyle`
   body {
     margin: 0;
   }
+  main {
+    padding-bottom: 40px;
+  }
   p {
     font-weight: 300;
   }

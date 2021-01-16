@@ -1,5 +1,12 @@
 import styled from "styled-components";
-import { FC, useState, useContext, useCallback, useMemo } from "react";
+import {
+  FC,
+  useState,
+  useContext,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react";
 import PrimaryButton from "~/components/primarybutton";
 import { Context } from "~/modules/auth";
 import ProfileIconEditor from "~/components/profileiconeditor";
@@ -13,6 +20,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import Indicator from "~/components/indicator";
 import Image from "next/image";
+import Snackbar, { Content as SnackbarContent } from "~/components/snackbar";
 
 const NameStyle = css`
   font-size: 24px;
@@ -24,7 +32,7 @@ const NameStyle = css`
 const AboutMeStyle = css`
   font-weight: 300;
   margin: 0;
-  text-align: center;
+  line-height: 180%;
 `;
 
 const Name = styled.h1`
@@ -34,10 +42,10 @@ const Name = styled.h1`
 const AboutMe = styled.p`
   ${AboutMeStyle}
   max-width: 500px;
-  padding: 10px 20px 0;
+  padding: 22px 20px 0;
   font-size: 13px;
-  line-height: 180%;
   white-space: pre-wrap;
+  text-align: center;
 `;
 
 const ProfileContainer = styled.div`
@@ -55,6 +63,22 @@ const ActionButton = styled(PrimaryButton)`
   font-weight: 500;
   padding: 10px 28px;
   justify-self: center;
+  min-width: 125px;
+`;
+
+const CancelButton = styled(ActionButton)`
+  color: rgba(0, 0, 0, 0.8);
+  background-color: white;
+  border: 1px rgba(0, 0, 0, 0.8) solid;
+  margin-left: 12px;
+  :active {
+    background-color: white;
+    color: rgba(0, 0, 0, 0.5);
+    border-color: rgba(0, 0, 0, 0.5);
+  }
+  :disabled {
+    border: none;
+  }
 `;
 
 const ImageContainer = styled.div`
@@ -67,43 +91,50 @@ const ImageContainer = styled.div`
   img {
     border-radius: 50%;
   }
-  @media screen and (min-width: 0) and (max-width: 499px) {
-    width: 120px;
-  }
-  @media screen and (min-width: 500px) {
-    width: 160px;
-  }
+  width: 32%;
+  min-width: 80px;
 `;
 
 const NameInput = styled.input`
+  ${NameStyle}
   outline: none;
   border: none;
-  ${NameStyle}
+  font-family: "Noto Sans JP", sans-serif;
 `;
 
 const AboutMeTextArea = styled.textarea`
+  ${AboutMeStyle}
   outline: none;
-  border: none;
-  resize: none;
-  height: 60px;
+  border: 0.5px rgba(0, 0, 0, 0.5) solid;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 120px;
   width: 100%;
   max-width: 500px;
   font-size: 16px;
-  ${AboutMeStyle}
+  padding: 8px;
+  box-sizing: border-box;
+  font-family: "Noto Sans JP", sans-serif;
 `;
 
 const UploadIndicator = styled(Indicator)`
-  justify-self: center;
-  padding-top: 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
 `;
 
-interface HeadingContainerProps {
-  isEditing: boolean;
-}
+const EditorToolBar = styled.div`
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  justify-content: flex-end;
+  height: 40px;
+`;
 
-const HeadingContainer = styled.div<HeadingContainerProps>`
+const HeadingContainer = styled.div`
   display: grid;
-  row-gap: ${(p) => (p.isEditing ? "20px" : "52px")};
+  row-gap: 32px;
   justify-content: stretch;
   width: 100%;
   max-width: 500px;
@@ -131,6 +162,16 @@ const UserHeader: FC<HeadingProps> = (props) => {
   const [isUploading, setIsUploading] = useState(false);
   const context = useContext(Context);
 
+  const [snackbar, setSnackbar] = useState<SnackbarContent>(undefined);
+
+  const canSubmit = useMemo(() => 0 < editingName.length, [editingName]);
+
+  useEffect(() => {
+    if (isEditing && snackbar) {
+      setSnackbar(undefined);
+    }
+  }, [snackbar, isEditing]);
+
   const submit = useCallback(async () => {
     if (editingName && context.auth?.user) {
       try {
@@ -149,8 +190,10 @@ const UserHeader: FC<HeadingProps> = (props) => {
           );
         setIsUploading(false);
         setIsEditing(false);
+        setSnackbar({
+          body: "更新完了しました！反映までに1,2分程度かかる場合があります。",
+        });
       } catch (e) {
-        console.error(e);
         setIsUploading(false);
       }
     }
@@ -160,15 +203,8 @@ const UserHeader: FC<HeadingProps> = (props) => {
     await sendEmailVerification();
   }, []);
 
-  const hasNameDifference = useMemo(() => {
-    return props.name !== editingName;
-  }, [props.name, editingName]);
-  const hasAboutMeDifference = useMemo(() => {
-    return props.aboutMe !== editingAboutMe;
-  }, [props.aboutMe, editingAboutMe]);
-  const canSubmit = useMemo(() => 0 < editingName.length, [editingName]);
   return (
-    <HeadingContainer isEditing={isEditing}>
+    <HeadingContainer>
       <ProfileContainer>
         <ImageContainer>
           <Image
@@ -196,16 +232,22 @@ const UserHeader: FC<HeadingProps> = (props) => {
               type="text"
               value={editingName}
               onChange={(e) => {
-                setEditingName(e.target.value);
+                if (!isUploading) {
+                  setEditingName(e.target.value);
+                }
               }}
             />
             <AboutMeTextArea
               value={editingAboutMe}
+              placeholder={
+                "あなたについてを書くことで読者の方に向けてあなたを知ってもらうことができます。"
+              }
               onChange={(e) => {
-                setEditingAboutMe(e.target.value);
+                if (!isUploading) {
+                  setEditingAboutMe(e.target.value);
+                }
               }}
             ></AboutMeTextArea>
-            <UploadIndicator visible={isUploading} width={20} height={20} />
           </>
         ) : (
           <div>
@@ -218,35 +260,53 @@ const UserHeader: FC<HeadingProps> = (props) => {
         <>
           {context.auth.user?.uid === props.id ? (
             <>
-              <ActionButton
-                onClick={() => {
-                  if (
-                    isEditing &&
-                    (hasNameDifference || hasAboutMeDifference)
-                  ) {
-                    submit();
-                  } else if (context.auth.user.emailVerified) {
-                    setIsEditing(!isEditing);
-                  } else {
-                    callSendEmail();
-                  }
-                }}
-                disabled={(!canSubmit && isEditing) || isUploading}
-              >
-                {isEditing
-                  ? hasNameDifference || hasAboutMeDifference
-                    ? "保存して編集を終了する"
-                    : "編集を終了する"
-                  : context.auth.user.emailVerified
-                  ? "プロフィールを編集"
-                  : "本人確認メールを送信"}
-              </ActionButton>
+              {isEditing && (
+                <EditorToolBar>
+                  <UploadIndicator
+                    visible={isUploading}
+                    width={20}
+                    height={20}
+                  />
+                  <ActionButton
+                    disabled={!canSubmit || isUploading}
+                    onClick={() => {
+                      submit();
+                    }}
+                  >
+                    保存する
+                  </ActionButton>
+                  <CancelButton
+                    disabled={isUploading}
+                    onClick={() => {
+                      setIsEditing(false);
+                    }}
+                  >
+                    キャンセル
+                  </CancelButton>
+                </EditorToolBar>
+              )}
+              {!isEditing && (
+                <ActionButton
+                  onClick={() => {
+                    if (context.auth.user.emailVerified) {
+                      setIsEditing(true);
+                    } else {
+                      callSendEmail();
+                    }
+                  }}
+                >
+                  {context.auth.user.emailVerified
+                    ? "プロフィールを編集"
+                    : "本人確認メールを送信"}
+                </ActionButton>
+              )}
             </>
           ) : (
             <ActionButton>フォローする</ActionButton>
           )}
         </>
       )}
+      {snackbar && <Snackbar {...snackbar} />}
     </HeadingContainer>
   );
 };
