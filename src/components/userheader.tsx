@@ -258,7 +258,7 @@ const UserHeader: FC<HeadingProps> = (props) => {
       </ProfileContainer>
       {context.auth && (
         <>
-          {context.auth.user?.uid === props.id ? (
+          {context.auth.user?.uid === props.id && (
             <>
               {isEditing && (
                 <EditorToolBar>
@@ -301,8 +301,6 @@ const UserHeader: FC<HeadingProps> = (props) => {
                 </ActionButton>
               )}
             </>
-          ) : (
-            <ActionButton>フォローする</ActionButton>
           )}
         </>
       )}
