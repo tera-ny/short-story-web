@@ -205,6 +205,7 @@ const Editor: FC<Props> = (props) => {
         <input
           id={pickerid}
           type={"file"}
+          accept=".png,.jpeg,.jpg,image/png,image/jpeg,image/jpg"
           onChange={(e) => {
             const file = e.target.files.item(0) ?? null;
             setIconFile(file);
