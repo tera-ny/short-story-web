@@ -15,7 +15,7 @@ const StoryContainer = styled.div`
   width: 100%;
   display: grid;
   box-sizing: border-box;
-  padding: 10px 10px 40px;
+  padding: 20px 0 40px;
   @media screen and (min-width: 0) and (max-width: 719px) {
     align-self: stretch;
   }
@@ -33,11 +33,11 @@ const Title = styled.h3`
     text-decoration: solid;
   }
   @media screen and (min-width: 0) and (max-width: 719px) {
-    padding: 8px 0 0;
+    padding: 8px 5px 0;
     font-size: 20px;
   }
   @media screen and (min-width: 720px) {
-    padding: 18px 0 0;
+    padding: 18px 5px 0;
     font-size: 24px;
   }
 `;
@@ -46,6 +46,12 @@ const Separator = styled.hr`
   width: 100%;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  @media screen and (min-width: 0) and (max-width: 719px) {
+    margin: 4px 0;
+  }
+  @media screen and (min-width: 720px) {
+    margin: 8px 0;
+  }
 `;
 
 const Body = styled.p`
@@ -53,7 +59,7 @@ const Body = styled.p`
   font-weight: 300;
   line-height: 230%;
   margin: 0;
-  padding: 30px 0;
+  padding: 30px 5px;
   @media screen and (min-width: 0) and (max-width: 719px) {
     font-size: 14px;
     text-align: left;
@@ -77,6 +83,7 @@ const TimeStamp = styled.p`
   text-align: right;
   justify-self: flex-end;
   margin: 0;
+  padding-top: 5px;
 `;
 
 const StoryComponent: FC<
@@ -93,7 +100,7 @@ const StoryComponent: FC<
       <Body>{props.body}</Body>
       {props.displayUser && (
         <Link href={`/users/${props.user.id}`} passHref>
-          <User>{props.user.name}</User>
+          <User>著 • {props.user.name}</User>
         </Link>
       )}
       <TimeStamp>{props.createTime}</TimeStamp>
