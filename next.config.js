@@ -8,6 +8,9 @@ module.exports = {
     MESSAGING_SENDER_ID_FOR_CLIENT: process.env.MESSAGING_SENDER_ID,
     APP_ID_FOR_CLIENT: process.env.APP_ID,
     MEASUREMENT_ID_FOR_CLIENT: process.env.MEASUREMENT_ID,
+    ALGOLIA_APPID_FOR_CLIENT: process.env.ALGOLIA_APPID,
+    ALGOLIA_SEARCH_KEY_FOR_CLIENT: process.env.ALGOLIA_SEARCH_KEY,
+    ALGOLIA_INDEX_FOR_CLIENT: process.env.ALGOLIA_INDEX,
   },
   images: {
     domains: ["storage.googleapis.com"],
