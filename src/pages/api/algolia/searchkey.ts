@@ -11,10 +11,11 @@ const generatePublicSearchKey = () => {
   })
 }
 
-const generateSecureSearchKey = (uid: string) => {
+const generateSecureSearchKey = (uid: string, validUntil: number) => {
   return client.generateSecuredApiKey(process.env.ALGOLIA_SEARCH_KEY, {
     filters: `userID:${uid} OR isPublished:true`,
     userToken: uid,
+    validUntil
   })
 }
 
@@ -32,19 +33,20 @@ const handler: NextApiHandler<SearchKeyAPIResponse> = async (req, res) => {
     res.statusCode = 401
     res.statusMessage = 'not support format'
     res.end()
-    return
   } else {
     const decodedToken = await admin.auth().verifyIdToken(token)
     if (uid === decodedToken.uid) {
-      res.status(200).json({
-        searchKey: generateSecureSearchKey(uid),
-        acceptIndices: [process.env.ALGOLIA_INDEX]
-      })
+      const lifetime = Math.floor(Date.now() / 1000) + 3600
+      const response: SearchKeyAPIResponse = {
+        searchKey: generateSecureSearchKey(uid, lifetime),
+        acceptIndices: [process.env.ALGOLIA_INDEX],
+        lifetimeMillis: lifetime * 1000,
+      }
+      res.status(200).json(response)
     } else {
       res.statusCode = 401
       res.statusMessage = 'Mismatch between id and token'
       res.end()
-      return
     }
   }
 }

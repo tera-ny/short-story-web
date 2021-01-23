@@ -58,4 +58,5 @@ export const userConverter: firebase.firestore.FirestoreDataConverter<User> = {
 export interface SearchKeyAPIResponse {
   searchKey: string,
   acceptIndices: [string]
+  lifetimeMillis?: number
 }
