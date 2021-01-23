@@ -54,3 +54,8 @@ export const userConverter: firebase.firestore.FirestoreDataConverter<User> = {
     return data as User;
   },
 };
+
+export interface SearchKeyAPIResponse {
+  searchKey: string,
+  acceptIndices: [string]
+}
