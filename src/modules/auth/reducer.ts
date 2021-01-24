@@ -3,7 +3,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 export interface State {
-  auth?: {
+  subscribed?: {
     user?: {
       uid: string;
       emailVerified: boolean;
@@ -35,7 +35,7 @@ export type Action =
     };
   };
 
-export const initialState: State = { subscribers: {}, auth: undefined };
+export const initialState: State = { subscribers: {}, subscribed: undefined };
 
 export const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
@@ -51,14 +51,14 @@ export const reducer: Reducer<State, Action> = (state, action) => {
       if (action.payload) {
         return {
           ...state,
-          auth: {
+          subscribed: {
             user: action.payload,
           },
         };
       } else {
         return {
           ...state,
-          auth: { user: undefined },
+          subscribed: { user: undefined },
         };
       }
     default:

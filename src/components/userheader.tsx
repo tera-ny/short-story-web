@@ -173,13 +173,13 @@ const UserHeader: FC<HeadingProps> = (props) => {
   }, [snackbar, isEditing]);
 
   const submit = useCallback(async () => {
-    if (editingName && context.auth?.user) {
+    if (editingName && context.subscribed?.user) {
       try {
         setIsUploading(true);
         await firebaseApp()
           .firestore()
           .collection(FirestorePath.user)
-          .doc(context.auth.user.uid)
+          .doc(context.subscribed.user.uid)
           .set(
             {
               name: editingName,
@@ -197,7 +197,7 @@ const UserHeader: FC<HeadingProps> = (props) => {
         setIsUploading(false);
       }
     }
-  }, [editingName, editingAboutMe, context.auth]);
+  }, [editingName, editingAboutMe, context.subscribed]);
 
   const callSendEmail = useCallback(async () => {
     await sendEmailVerification();
@@ -217,11 +217,11 @@ const UserHeader: FC<HeadingProps> = (props) => {
             width={200}
             height={200}
           />
-          {isEditing && context.auth?.user && (
+          {isEditing && context.subscribed?.user && (
             <>
               <ProfileIconEditor
                 uploaded={setIcon}
-                uid={context.auth.user.uid}
+                uid={context.subscribed.user.uid}
               />
             </>
           )}
@@ -256,9 +256,9 @@ const UserHeader: FC<HeadingProps> = (props) => {
           </div>
         )}
       </ProfileContainer>
-      {context.auth && (
+      {context.subscribed && (
         <>
-          {context.auth.user?.uid === props.id && (
+          {context.subscribed.user?.uid === props.id && (
             <>
               {isEditing && (
                 <EditorToolBar>
@@ -288,14 +288,14 @@ const UserHeader: FC<HeadingProps> = (props) => {
               {!isEditing && (
                 <ActionButton
                   onClick={() => {
-                    if (context.auth.user.emailVerified) {
+                    if (context.subscribed.user.emailVerified) {
                       setIsEditing(true);
                     } else {
                       callSendEmail();
                     }
                   }}
                 >
-                  {context.auth.user.emailVerified
+                  {context.subscribed.user.emailVerified
                     ? "プロフィールを編集"
                     : "本人確認メールを送信"}
                 </ActionButton>

@@ -18,8 +18,8 @@ const Notfound: NextPage = () => (
         </p>
         <Context.Consumer>
           {(state) =>
-            state.auth &&
-            !state.auth.user && (
+            state.subscribed &&
+            !state.subscribed.user && (
               <p>
                 心当たりが無い場合お手数ですがログインを行い、再度ページの確認をお願いします。
               </p>

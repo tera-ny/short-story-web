@@ -158,7 +158,7 @@ const Editor: FC<Props> = (props) => {
     }
   }, [length, props.state.limit]);
   const submit = useCallback(async () => {
-    if (!authContext.auth?.user) {
+    if (!authContext.subscribed?.user) {
       return;
     }
     const state = props.state;
@@ -173,7 +173,7 @@ const Editor: FC<Props> = (props) => {
           updateTime: firebase.firestore.FieldValue.serverTimestamp(),
         });
       } else {
-        ref = await storyCollectionRef(authContext.auth.user.uid).add({
+        ref = await storyCollectionRef(authContext.subscribed.user.uid).add({
           title: state.title,
           body: state.body,
           isActive: true,
@@ -188,7 +188,7 @@ const Editor: FC<Props> = (props) => {
       console.error(error);
       setIsUpdating(false);
     }
-  }, [props.state, authContext.auth]);
+  }, [props.state, authContext.subscribed]);
   const toggleDisabledNote = useCallback(() => {
     setDisabledNote(!disabledNote);
   }, [disabledNote]);

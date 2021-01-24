@@ -49,8 +49,8 @@ const Login: FC = () => {
     async (email: string, password: string) => {
       if (
         isCreating === false &&
-        authContext.auth &&
-        authContext.auth.user === undefined
+        authContext.subscribed &&
+        authContext.subscribed.user === undefined
       ) {
         setIsCreating(true);
         setError(undefined);
@@ -68,7 +68,7 @@ const Login: FC = () => {
         setIsCreating(false);
       }
     },
-    [isCreating, authContext.auth]
+    [isCreating, authContext.subscribed]
   );
   const [path, as] = useMemo(() => {
     const query = router.query;
@@ -80,7 +80,7 @@ const Login: FC = () => {
     ];
   }, [router.query]);
   useEffect(() => {
-    if (authContext.auth?.user && !isCreating) {
+    if (authContext.subscribed?.user && !isCreating) {
       if (path && as) {
         router.push(path, as);
       } else if (path) {
@@ -89,12 +89,12 @@ const Login: FC = () => {
         router.push("/");
       }
     }
-  }, [path, as, router, authContext.auth?.user, isCreating]);
+  }, [path, as, router, authContext.subscribed?.user, isCreating]);
   return (
     <Context.Consumer>
       {(state) =>
-        state.auth &&
-        !state.auth.user && (
+        state.subscribed &&
+        !state.subscribed.user && (
           <Container>
             <Title>short-story.spaceアカウントを作成する</Title>
             <UserForm
