@@ -1,10 +1,20 @@
-import algoliasearch from 'algoliasearch/lite'
+import { SearchKeyAPIResponse } from '~/modules/entity'
+import { firebaseApp } from '~/modules/firebase'
 
-const client = algoliasearch(process.env.ALGOLIA_APPID_FOR_CLIENT, process.env.ALGOLIA_SEARCH_KEY_FOR_CLIENT)
-
-const index = client.initIndex(process.env.ALGOLIA_INDEX_FOR_CLIENT)
-
-export const search = async (text: string) => {
-  const result = await index.search(text)
-  return result.hits.map(hit => hit.objectID)
-}
+export const fetchSearchKey = async (): Promise<SearchKeyAPIResponse> => {
+  const user = firebaseApp().auth().currentUser
+  let headers: Headers
+  if (user) {
+    const token = await user.getIdToken();
+    headers = new Headers({
+      Authorization: `${user.uid} ` + token,
+    })
+  } else {
+    headers = new Headers()
+  }
+  const result = await fetch("/api/algolia/searchkey", {
+    headers: headers,
+  })
+    .then((result) => result.json());
+  return result as SearchKeyAPIResponse;
+};

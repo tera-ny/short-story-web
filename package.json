@@ -16,6 +16,7 @@
     "algoliasearch": "^4.8.4",
     "dayjs": "^1.9.8",
     "firebase": "^8.2.1",
+    "firebase-admin": "^9.4.2",
     "next": "10.0.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
@@ -42,6 +43,6 @@
     "vercel": "^21.0.1"
   },
   "engines": {
-    "node": "12.19.0"
+    "node": "12.20.1"
   }
 }

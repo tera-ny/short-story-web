@@ -8,7 +8,7 @@ import {
 } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { createUser, firebaseApp } from "~/modules/firebase";
+import { firebaseApp } from "~/modules/firebase";
 import { Context } from "~/modules/auth";
 import UserForm from "~/components/userform";
 import Link from "next/link";
@@ -65,7 +65,6 @@ const Login: FC = () => {
           setError(generateMessage(error));
           return;
         }
-        await createUser(credential);
         setIsCreating(false);
       }
     },
@@ -81,7 +80,7 @@ const Login: FC = () => {
     ];
   }, [router.query]);
   useEffect(() => {
-    if (authContext.auth && !isCreating) {
+    if (authContext.auth?.user && !isCreating) {
       if (path && as) {
         router.push(path, as);
       } else if (path) {
@@ -90,7 +89,7 @@ const Login: FC = () => {
         router.push("/");
       }
     }
-  }, [path, as, router, authContext.auth, isCreating]);
+  }, [path, as, router, authContext.auth?.user, isCreating]);
   return (
     <Context.Consumer>
       {(state) =>

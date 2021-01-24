@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { Context } from "~/modules/auth";
 import PrimaryLink from "~/components/primarylink";
 import { useRouter } from "next/router";
-import { search } from "~/modules/algolia";
 
 const Wrapper = styled.div`
   margin-left: 20px;
@@ -74,11 +73,6 @@ const hiddenLoginPaths = () => ["/login", "/register"];
 
 const Header: VFC = () => {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const callSearch = useCallback(async () => {
-    const results = await search(searchQuery);
-    console.log(results);
-  }, [searchQuery]);
   return (
     <header>
       <Wrapper>
@@ -87,15 +81,6 @@ const Header: VFC = () => {
             <TitleLink>short-story.space</TitleLink>
           </a>
         </Link>
-        <input
-          type="text"
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-          }}
-          onKeyPress={(e) => {
-            if (e.code === "Enter") callSearch();
-          }}
-        />
         <Context.Consumer>
           {(state) => (
             <>
