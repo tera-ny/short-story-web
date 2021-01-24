@@ -21,19 +21,19 @@ export enum ActionType {
 
 export type Action =
   | {
-      type: ActionType.subscribe;
-      payload: {
-        subscriber: firebase.Unsubscribe;
-      };
-    }
-  | {
-      type: ActionType.changedAuth;
-      payload?: {
-        uid: string;
-        emailVerified: boolean;
-        subscribed?: () => void;
-      };
+    type: ActionType.subscribe;
+    payload: {
+      subscriber: firebase.Unsubscribe;
     };
+  }
+  | {
+    type: ActionType.changedAuth;
+    payload?: {
+      uid: string;
+      emailVerified: boolean;
+      subscribed?: () => void;
+    };
+  };
 
 export const initialState: State = { subscribers: {}, auth: undefined };
 
