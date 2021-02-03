@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { Props } from "~/pages/users/[userid]";
 import StoryComponent from "~/components/storycomponent";
 import styled from "styled-components";
 import Header from "~/components/userheader";
@@ -23,19 +22,11 @@ const Contents = styled.div`
   box-sizing: border-box;
 `;
 
-const User: FC<Props> = (props) => {
+const User: FC = (props) => {
   return (
     <Container>
-      <Header {...props.user} />
       <SectionHeader>新しいお話</SectionHeader>
-      <Contents>
-        {props.user &&
-          props.contents.map((content, index) => {
-            return (
-              <StoryComponent key={index} user={props.user} {...content} />
-            );
-          })}
-      </Contents>
+      <Contents></Contents>
     </Container>
   );
 };
