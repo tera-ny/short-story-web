@@ -1,12 +1,12 @@
 import Header from "~/components/header";
 import NextHead from "next/head";
-import Template from "~/template/top";
 import { NextPage, GetStaticProps } from "next";
 import "firebase/firestore";
 import { firebaseApp } from "~/modules/firebase";
 import { storyConverter, userConverter } from "~/modules/entity";
 import { format } from "~/modules/date";
 import { Content as StoryContent } from "~/components/storycomponent";
+import styled from "styled-components";
 
 export type Content = StoryContent & { user: { id: string; name: string } };
 
@@ -55,9 +55,27 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }
 };
 
+const Container = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Main = styled.main`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+`;
+
+const Title = styled.h1`
+  font-size: 40px;
+`;
+
 const Home: NextPage<Props> = (props) => {
   return (
-    <div>
+    <Container>
       <NextHead>
         <title>short-story.space</title>
         <meta property="og:title" content="short-story.space トップ" />
@@ -69,10 +87,11 @@ const Home: NextPage<Props> = (props) => {
         />
       </NextHead>
       <Header />
-      <main>
-        <Template contents={props.contents} />
-      </main>
-    </div>
+      <Main>
+        <Title>Comming Soon!</Title>
+        <p>近日公開予定です</p>
+      </Main>
+    </Container>
   );
 };
 
