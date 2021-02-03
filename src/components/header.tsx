@@ -1,9 +1,7 @@
 import { VFC } from "react";
 import Link from "next/link";
 import styled from "styled-components";
-import { Context } from "~/modules/auth";
 import PrimaryLink from "~/components/primarylink";
-import { useRouter } from "next/router";
 
 const Wrapper = styled.div`
   margin-left: 20px;
@@ -69,10 +67,7 @@ const PostLink = styled(PrimaryLink)`
   }
 `;
 
-const hiddenLoginPaths = () => ["/login", "/register"];
-
 const Header: VFC = () => {
-  const router = useRouter();
   return (
     <header>
       <Wrapper>
@@ -81,34 +76,6 @@ const Header: VFC = () => {
             <TitleLink>short-story.space</TitleLink>
           </a>
         </Link>
-        <Context.Consumer>
-          {(state) => (
-            <>
-              {state.auth !== undefined &&
-                state.auth.user === undefined &&
-                hiddenLoginPaths().indexOf(router.pathname) < 0 && (
-                  <Link
-                    href={{
-                      pathname: "/login",
-                      query: {
-                        redirect_to_path: router.asPath,
-                      },
-                    }}
-                    passHref
-                  >
-                    <Login>ログイン</Login>
-                  </Link>
-                )}
-              {state.auth !== undefined &&
-                state.auth.user !== undefined &&
-                router.pathname !== "/new" && (
-                  <Link href="/new" passHref>
-                    <PostLink>投稿する</PostLink>
-                  </Link>
-                )}
-            </>
-          )}
-        </Context.Consumer>
       </Wrapper>
     </header>
   );

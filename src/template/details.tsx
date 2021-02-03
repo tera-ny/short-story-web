@@ -1,14 +1,10 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import StoryComponent from "~/components/storycomponent";
-import { Content } from "~/pages/users/[userid]/stories/[storyid]";
 import styled from "styled-components";
 import PrimaryLink from "~/components/primarylink";
 import Link from "next/link";
 
-export interface Props {
-  content: Content;
-}
+export interface Props {}
 
 const Container = styled.div`
   padding: 20px;
@@ -29,15 +25,10 @@ const EditLink = styled(PrimaryLink)`
   right: 20px;
 `;
 
-const Details: FC<Props> = ({ content }) => {
+const Details: FC<Props> = () => {
   const query = useRouter().query;
   return (
     <Container>
-      <StoryComponent
-        {...content}
-        createTime={content.displayTime}
-        displayUser={true}
-      />
       <Link
         href={{
           pathname: "/users/[userid]/stories/[storyid]/edit",
